@@ -8,6 +8,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from download_kb import DownloadFile
+import datetime
+
+currentDT = datetime.datetime.now()
+print("Start: " + str(currentDT))
 
 url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
 
@@ -78,7 +82,6 @@ for x in td_list:
 
 print(len(msp_file_list))
 
-
 firefoxProfile = webdriver.FirefoxProfile()
 firefoxProfile.set_preference("browser.download.folderList", 2)
 firefoxProfile.set_preference(
@@ -90,22 +93,23 @@ firefoxProfile.set_preference(
 firefoxProfile.set_preference(
     "browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
 
-
 browser = webdriver.Firefox(firefox_profile=firefoxProfile)
-KB = "3213650"
-product = "Office 2016"
 
 for item in msp_file_list:
     if(item.security_greater_than_non_security):
-        print("Only need security KB" + item.security_KB + "," + item.product)
+        print("*** Only need security KB" + item.security_KB + "," + item.product)
         DownloadFile(browser, item.security_KB, item.product)
     else:
         if(item.non_security_KB != "Not applicable"):
-            print(item.non_security_KB + "," + item.product)
+            print("*** start KB" + item.non_security_KB + "," + item.product)
             DownloadFile(browser, item.non_security_KB, item.product)
+            
         if(item.security_KB != "Not applicable"):
-            print(item.security_KB + "," + item.product)
-            DownloadFile(browser, item.product, item.product)
-
+            print("*** start KB" + item.security_KB + "," + item.product)
+            
+    print("##############################")
 # browser.implicitly_wait(10)
 # browser.quit()
+
+currentDT = datetime.datetime.now()
+print("Done: " + str(currentDT))
