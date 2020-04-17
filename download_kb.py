@@ -1,7 +1,11 @@
 import time
 
-
 def DownloadFile(browser, KB, product):
+
+    '''
+        Get Current working Directory
+    '''
+    currentDirectory = r"C:\Temp\Office2016_KBs\\"
 
     browser.get(str.format('https://support.microsoft.com/help/{0}', KB))
     browser.implicitly_wait(5)
@@ -59,7 +63,7 @@ def DownloadFile(browser, KB, product):
             print("32bit KB" + KB + ": " + href_link_tag_32bit)
         except:
             get_download_link_32bit = "false"
-            browser.save_screenshot("KB" + KB + "_32bit_link.png")   
+            browser.save_screenshot(currentDirectory + "KB" + KB + "_32bit_link.png")   
     else:
         print("Failed to get 32bit download link for this KB" + KB)
 
@@ -70,7 +74,7 @@ def DownloadFile(browser, KB, product):
             print("64bit KB" + KB + ": " + href_link_tag_64bit)
         except:
             get_download_link_64bit = "false"
-            browser.save_screenshot("KB" + KB + "_64bit_link.png")
+            browser.save_screenshot(currentDirectory + "KB" + KB + "_64bit_link.png")
     else:
         print("Failed to get 64bit download link for this KB" + KB)
 
@@ -92,7 +96,7 @@ def DownloadFile(browser, KB, product):
             time.sleep(15)
         except:
             print("FAILED TO GET 32bit KB" + KB + ": "  + href_link_tag_32bit)
-            browser.save_screenshot("KB" + KB + "_32bit_error.png")
+            browser.save_screenshot(currentDirectory + "KB" + KB + "_32bit_error.png")
 
         try:
             if(get_download_link_64bit == "true"):
@@ -111,4 +115,4 @@ def DownloadFile(browser, KB, product):
                 time.sleep(15)
         except:
             print("FAILED TO GET 64bit KB" + KB + ": " + href_link_tag_64bit)
-            browser.save_screenshot("KB" + KB + "_64bit_error.png")
+            browser.save_screenshot(currentDirectory + "KB" + KB + "_64bit_error.png")
