@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 from download_kb import DownloadFile
 
 url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
@@ -97,14 +98,14 @@ product = "Office 2016"
 for item in msp_file_list:
     if(item.security_greater_than_non_security):
         print("Only need security KB" + item.security_KB + "," + item.product)
-        DownloadFile(browser, item.security_KB, item.product, "true")
+        DownloadFile(browser, item.security_KB, item.product)
     else:
         if(item.non_security_KB != "Not applicable"):
             print(item.non_security_KB + "," + item.product)
-            DownloadFile(browser, item.non_security_KB, item.product, "false")
+            DownloadFile(browser, item.non_security_KB, item.product)
         if(item.security_KB != "Not applicable"):
             print(item.security_KB + "," + item.product)
-            DownloadFile(browser, item.product, item.product, "true")
+            DownloadFile(browser, item.product, item.product)
 
 # browser.implicitly_wait(10)
 # browser.quit()
