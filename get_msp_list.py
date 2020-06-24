@@ -7,13 +7,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as EC
 from download_kb import DownloadFile
 import datetime
+import time
 
 currentDT = datetime.datetime.now()
 print("Start: " + str(currentDT))
 
-url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
+# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
 
 page = urllib.request.urlopen(url)
 content = page.read().decode('utf-8')
@@ -97,17 +100,26 @@ browser = webdriver.Firefox(firefox_profile=firefoxProfile)
 
 for item in msp_file_list:
     if(item.security_greater_than_non_security):
-        print("*** Only need security KB" + item.security_KB + "," + item.product)
+        print("*** Only need security KB" +
+              item.security_KB + "," + item.product)
         DownloadFile(browser, item.security_KB, item.product)
+        print("### finish KB" + item.security_KB + "," + item.product)
+
+        time.sleep(3 * 60)
     else:
         if(item.non_security_KB != "Not applicable"):
             print("*** start KB" + item.non_security_KB + "," + item.product)
             DownloadFile(browser, item.non_security_KB, item.product)
-            
+            print("### finish KB" + item.non_security_KB + "," + item.product)
+
         if(item.security_KB != "Not applicable"):
             print("*** start KB" + item.security_KB + "," + item.product)
-            
-    print("##############################")
+            DownloadFile(browser, item.security_KB, item.product)
+            print("### finish KB" + item.security_KB + "," + item.product)
+
+        time.sleep(3 * 60)
+
+print("##############################")
 # browser.implicitly_wait(10)
 # browser.quit()
 
