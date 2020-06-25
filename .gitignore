@@ -136,3 +136,14 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Download files
+Office2013_KBs
+Office2016_KBs
+
+# Log files
+msp_file_list.txt
+kb_list.txt
+ignore_kb_list.txt
+exclude_kb_list.txt
+log.txt
