@@ -106,7 +106,6 @@ for x in td_list:
     msp_file_list.append(mspFile)
 
 msg = ""
-log = ""
 new_line = '\n'
 
 f = open(current_script_folder + "msp_file_list.txt", "w")
@@ -117,7 +116,6 @@ for element in msp_file_list:
 f.close()
 
 logger.info("List length: " + str(len(msp_file_list)))
-log += "List length: " + str(len(msp_file_list)) + new_line
 
 firefoxProfile = webdriver.FirefoxProfile()
 firefoxProfile.set_preference("browser.download.folderList", 2)
@@ -155,29 +153,30 @@ for item in msp_file_list:
         current_kb_number = "KB" + item.security_KB + "\n"
 
         if current_kb_number in exclude_list:
-            logger.info(str(">>{0}>> @@@Exclude the {1}",
-                            count, current_kb_number))
+            logger.info(str.format(
+                ">>[{0}]>> @@@Exclude the {1}", count, current_kb_number))
             continue
 
         kb_list.append("KB" + item.security_KB + new_line)
         ignore_kb_list.append("KB" + item.non_security_KB)
 
-        msg = str(">>{0}>> Only need security KB{1}, {2}",
-                  count, item.security_KB, item.product)
+        msg = str.format(">>{0}>> Only need security KB{1}, {2}",
+                         count, item.security_KB, item.product)
         logger.info(msg)
 
-        msg = str(">>{0}>> *** start KB{1}, {2}",
-                  count, item.security_KB, item.product)
+        msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
+                         item.security_KB, item.product)
         logger.info(msg)
 
-        msg = str(">>{0}>> ... Ingore KB{1}, {2}", count, item.non_security_KB)
+        msg = str.format(">>{0}>> ... Ingore KB{1}, {2}",
+                         count, item.non_security_KB, item.product)
         logger.info(msg)
 
         download_file(browser, item.security_KB,
                       item.product, target_download_folder)
 
-        msg = str(">>{0}>> ### finish KB{1}, {2}",
-                  count, item.security_KB, item.product)
+        msg = str.format(">>{0}>> ### finish KB{1}, {2}",
+                         count, item.security_KB, item.product)
         logger.info(msg)
 
         time.sleep(3 * 60)
@@ -186,21 +185,21 @@ for item in msp_file_list:
             current_kb_number = "KB" + item.non_security_KB + "\n"
 
             if current_kb_number in exclude_list:
-                logger.info(str(">>{0}>> @@@Exclude the {1}",
-                            count, current_kb_number))
+                logger.info(str.format(
+                    ">>{0}>> @@@Exclude the {1}", count, current_kb_number))
                 continue
 
             kb_list.append("KB" + item.non_security_KB + new_line)
 
-            msg = str(">>{0}>> *** start KB{1}, {2}",
-                  count, item.non_security_KB, item.product)
+            msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
+                             item.non_security_KB, item.product)
             logger.info(msg)
 
             download_file(browser, item.non_security_KB,
                           item.product, target_download_folder)
 
-            msg = str(">>{0}>> ### finish KB{1}, {2}",
-                  count, item.non_security_KB, item.product)
+            msg = str.format(">>{0}>> ### finish KB{1}, {2}",
+                             count, item.non_security_KB, item.product)
             logger.info(msg)
 
             time.sleep(2 * 60)
@@ -210,22 +209,21 @@ for item in msp_file_list:
             current_kb_number = "KB" + item.security_KB + "\n"
 
             if current_kb_number in exclude_list:
-                logger.info(str(">>{0}>> @@@Exclude the {1}",
-                            count, current_kb_number))
+                logger.info(str.format(">>{0}>> @@@Exclude the {1}",
+                                       count, current_kb_number))
                 continue
 
             kb_list.append("KB" + item.security_KB + new_line)
 
-            msg = str(">>{0}>> *** start KB{1}, {2}",
-                  count, item.security_KB, item.product)
+            msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
+                             item.security_KB, item.product)
             logger.info(msg)
 
             download_file(browser, item.security_KB,
                           item.product, target_download_folder)
 
-            msg = str(">>{0}>> ### finish KB{1}, {2}",
-                  count, item.security_KB, item.product)
-            log += msg + new_line
+            msg = str.format(">>{0}>> ### finish KB{1}, {2}",
+                             count, item.security_KB, item.product)
             logger.info(msg)
 
             time.sleep(2 * 60)
@@ -240,10 +238,6 @@ f = open(current_script_folder + "ignore_kb_list.txt", "w")
 for element in ignore_kb_list:
     f.write(element)
     f.write('\n')
-f.close()
-
-f = open(current_script_folder + "log.txt", "w")
-f.write(log)
 f.close()
 
 logger.info("##############################")
