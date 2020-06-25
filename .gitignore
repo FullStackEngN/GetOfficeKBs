@@ -147,3 +147,4 @@ kb_list.txt
 ignore_kb_list.txt
 exclude_kb_list.txt
 log.txt
+*.png

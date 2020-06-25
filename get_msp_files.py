@@ -3,16 +3,16 @@ import logging
 import pathlib
 import time
 import urllib.request
+from download_kb_file import download_file
+from msp_file import MspFile
 from lxml import html
 from lxml import etree
-from mspfile import MspFile
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
-from download_kb import download_file
 
 
 current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + "\\"
@@ -132,9 +132,14 @@ firefoxProfile.set_preference(
 
 browser = webdriver.Firefox(firefox_profile=firefoxProfile)
 
-f = open(current_script_folder + "exclude_kb_list.txt", 'r')
-exclude_list = f.readlines()
-f.close()
+exclude_list = []
+try:
+    f = open(current_script_folder + "exclude_kb_list.txt", 'r')
+    exclude_list = f.readlines()
+except:
+    logging.info("No exclude_kb_list file, so don't need exclude KBs.")
+finally:
+    f.close()
 
 kb_list = []
 ignore_kb_list = []
