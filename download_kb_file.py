@@ -1,9 +1,16 @@
 import datetime
 import logging
 import time
-
+import os
 
 def download_file(browser, kb_number, product, target_folder):
+
+    if not os.path.exists(target_folder):
+        os.makedirs(target_folder)
+
+    if not os.path.exists(target_folder + "screenshots"):
+        os.makedirs(target_folder + "screenshots")
+        logging.info("Screenshots folder doesn't exist, create it: " + target_folder + "screenshots")
 
     logger = logging.getLogger('download_kb')
 
@@ -97,9 +104,9 @@ def download_file(browser, kb_number, product, target_folder):
                 "Exception to get 32bit download link for this KB" + kb_number)
             get_download_link_32bit = "false"
             browser.save_screenshot(
-                target_folder + "save_screenshot\\KB" + kb_number + "_32bit_exception.png")
+                target_folder + "screenshots\\KB" + kb_number + "_32bit_exception.png")
     else:
-        browser.save_screenshot(target_folder + "save_screenshot\\KB" +
+        browser.save_screenshot(target_folder + "screenshots\\KB" +
                                 kb_number + "_32bit_warning.png")
         logger.warning("No matched text for 32bit KB" + kb_number)
 
@@ -113,9 +120,9 @@ def download_file(browser, kb_number, product, target_folder):
                 "Exception to get 64bit download link for this KB" + kb_number)
             get_download_link_64bit = "false"
             browser.save_screenshot(
-                target_folder + "save_screenshot\\KB" + kb_number + "_64bit_exception.png")
+                target_folder + "screenshots\\KB" + kb_number + "_64bit_exception.png")
     else:
-        browser.save_screenshot(target_folder + "save_screenshot\\KB" +
+        browser.save_screenshot(target_folder + "screenshots\\KB" +
                                 kb_number + "_64bit_warning.png")
         logger.warning("No matched text for 64bit KB" + kb_number)
 

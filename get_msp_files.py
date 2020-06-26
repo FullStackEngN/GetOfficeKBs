@@ -3,6 +3,7 @@ import logging
 import pathlib
 import time
 import urllib.request
+import os
 from download_kb_file import download_file
 from msp_file import MspFile
 from lxml import html
@@ -31,16 +32,19 @@ logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
 
 url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
-logger.info("The download URL is " + url)
-
-#target_download_folder = r"C:\Temp\Office2013_KBs\\"
 target_download_folder = current_script_folder + "Office2013_KBs\\"
 
+
 # url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
-#target_download_folder = r"C:\Temp\Office2016_KBs\\"
 #target_download_folder = current_script_folder + "Office2016_KBs"
 
+logger.info("The download URL is " + url)
 logger.info("The target download folder is " + target_download_folder)
+
+if not os.path.exists(target_download_folder):
+    os.makedirs(target_download_folder)
+    logger.info("The target download folder doesn't exist, create it.")
+
 
 page = urllib.request.urlopen(url)
 content = page.read().decode('utf-8')
