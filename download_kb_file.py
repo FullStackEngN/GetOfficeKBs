@@ -97,9 +97,9 @@ def download_file(browser, kb_number, product, target_folder):
                 "Exception to get 32bit download link for this KB" + kb_number)
             get_download_link_32bit = "false"
             browser.save_screenshot(
-                target_folder + "KB" + kb_number + "_32bit_warning.png")
+                target_folder + "save_screenshot\\KB" + kb_number + "_32bit_exception.png")
     else:
-        browser.save_screenshot(target_folder + "KB" +
+        browser.save_screenshot(target_folder + "save_screenshot\\KB" +
                                 kb_number + "_32bit_warning.png")
         logger.warning("No matched text for 32bit KB" + kb_number)
 
@@ -113,9 +113,9 @@ def download_file(browser, kb_number, product, target_folder):
                 "Exception to get 64bit download link for this KB" + kb_number)
             get_download_link_64bit = "false"
             browser.save_screenshot(
-                target_folder + "KB" + kb_number + "_64bit_warning.png")
+                target_folder + "save_screenshot\\KB" + kb_number + "_64bit_exception.png")
     else:
-        browser.save_screenshot(target_folder + "KB" +
+        browser.save_screenshot(target_folder + "save_screenshot\\KB" +
                                 kb_number + "_64bit_warning.png")
         logger.warning("No matched text for 64bit KB" + kb_number)
 
@@ -145,12 +145,12 @@ def download_file(browser, kb_number, product, target_folder):
             logger.error("EXCEPTION TO DOWNLOAD 32bit KB" +
                          kb_number + ": " + href_link_tag_32bit)
             browser.save_screenshot(
-                target_folder + "KB" + kb_number + "_32bit_error.png")
+                target_folder + "error_screenshots\\KB" + kb_number + "_32bit_error.png")
     else:
-        browser.save_screenshot(target_folder + "KB" +
+        browser.save_screenshot(target_folder + "error_screenshots\\KB" +
                                 kb_number + "_32bit_error.png")
         logger.error("Don't find download link for 32bit KB" +
-                     kb_number + ", Stop the download process.")
+                     kb_number + " from " + url +", Product is " + product + ", Stop the download process.")
 
     if(get_download_link_64bit == "true"):
         try:
@@ -177,11 +177,11 @@ def download_file(browser, kb_number, product, target_folder):
             logger.error("EXCEPTION TO DOWNLOAD 64bit KB" +
                          kb_number + ": " + href_link_tag_64bit)
             browser.save_screenshot(
-                target_folder + "KB" + kb_number + "_64bit_error.png")
+                target_folder + "error_screenshots\\KB" + kb_number + "_64bit_error.png")
     else:
-        browser.save_screenshot(target_folder + "KB" +
+        browser.save_screenshot(target_folder + "error_screenshots\\KB" +
                                 kb_number + "_64bit_error.png")
         logger.error("Don't find download link for 64bit KB" +
-                     kb_number + ", Stop the download process.")
+                     kb_number + " from " + url +", Product is " + product + ", Stop the download process.")
 
     logger.info("Finish download KB" + kb_number)

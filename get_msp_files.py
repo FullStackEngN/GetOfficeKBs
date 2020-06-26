@@ -11,8 +11,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support import expected_conditions as EC
 
 
 current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + "\\"
@@ -31,7 +29,7 @@ url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list
 logger.info("The download URL is " + url)
 
 #target_download_folder = r"C:\Temp\Office2013_KBs\\"
-target_download_folder = current_script_folder + "Office2013_KBs"
+target_download_folder = current_script_folder + "Office2013_KBs\\"
 
 # url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
 #target_download_folder = r"C:\Temp\Office2016_KBs\\"
@@ -157,7 +155,7 @@ for item in msp_file_list:
                 ">>[{0}]>> @@@Exclude the {1}", count, current_kb_number))
             continue
 
-        kb_list.append("KB" + item.security_KB + new_line)
+        kb_list.append("KB" + item.security_KB)
         ignore_kb_list.append("KB" + item.non_security_KB)
 
         msg = str.format(">>{0}>> Only need security KB{1}, {2}",
@@ -189,7 +187,7 @@ for item in msp_file_list:
                     ">>{0}>> @@@Exclude the {1}", count, current_kb_number))
                 continue
 
-            kb_list.append("KB" + item.non_security_KB + new_line)
+            kb_list.append("KB" + item.non_security_KB)
 
             msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
                              item.non_security_KB, item.product)
@@ -213,7 +211,7 @@ for item in msp_file_list:
                                        count, current_kb_number))
                 continue
 
-            kb_list.append("KB" + item.security_KB + new_line)
+            kb_list.append("KB" + item.security_KB)
 
             msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
                              item.security_KB, item.product)
