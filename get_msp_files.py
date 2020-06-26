@@ -18,8 +18,13 @@ current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + "\\"
 FORMAT = '%(asctime)s %(levelname)s %(message)s'
 FILENAME = current_script_folder + "log.txt"
 
-logging.basicConfig(filename=FILENAME, format=FORMAT)
+logging.basicConfig(format=FORMAT, datefmt= '%a, %d %b %Y %H:%M:%S',filename=FILENAME, filemode='w')
 logger = logging.getLogger('download_kb')
+
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+# add the handler to the root logger
+logging.getLogger().addHandler(console)
 
 current_date_time = datetime.datetime.now()
 logger.info("The script starts running.")
@@ -131,7 +136,10 @@ browser = webdriver.Firefox(firefox_profile=firefoxProfile)
 exclude_list = []
 try:
     f = open(current_script_folder + "exclude_kb_list.txt", 'r')
-    exclude_list = f.readlines()
+
+    for line in f:
+        exclude_list.append(line.strip().upper())
+
 except:
     logging.info("No exclude_kb_list file, so don't need exclude KBs.")
 finally:
@@ -148,7 +156,7 @@ for item in msp_file_list:
 
     if(item.security_greater_than_non_security):
 
-        current_kb_number = "KB" + item.security_KB + "\n"
+        current_kb_number = "KB" + item.security_KB
 
         if current_kb_number in exclude_list:
             logger.info(str.format(
@@ -180,7 +188,8 @@ for item in msp_file_list:
         time.sleep(3 * 60)
     else:
         if(item.non_security_KB != "Not applicable"):
-            current_kb_number = "KB" + item.non_security_KB + "\n"
+            
+            current_kb_number = "KB" + item.non_security_KB
 
             if current_kb_number in exclude_list:
                 logger.info(str.format(
@@ -204,7 +213,7 @@ for item in msp_file_list:
 
         if(item.security_KB != "Not applicable"):
 
-            current_kb_number = "KB" + item.security_KB + "\n"
+            current_kb_number = "KB" + item.security_KB
 
             if current_kb_number in exclude_list:
                 logger.info(str.format(">>{0}>> @@@Exclude the {1}",
