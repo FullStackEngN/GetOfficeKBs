@@ -149,95 +149,164 @@ except:
 finally:
     f.close()
 
+expected_kb_list = []
+try:
+    f = open(current_script_folder + "expected_kb_list.txt", 'r')
+
+    for line in f:
+        expected_kb_list.append(line.strip().upper())
+
+    logging.info("Read expected_kb_list file, length is :" + len(expected_kb_list))
+except:
+    logging.info("No expected_kb_list file, so don't need exclude KBs.")
+finally:
+    f.close()
+
 kb_list = []
 ignore_kb_list = []
 
 count = 0
 
-for item in msp_file_list:
-
-    count += 1
-
-    if(item.security_greater_than_non_security):
-
+if len(expected_kb_list) > 0 :
+    for item in msp_file_list:
+        
         current_kb_number = "KB" + item.security_KB
+        if current_kb_number in expected_kb_list:
+            logger.info("Find the expected " + current_kb_number)
 
-        if current_kb_number in exclude_list:
-            logger.info(str.format(
-                ">>[{0}]>> @@@Exclude the {1}", count, current_kb_number))
-            continue
-
-        kb_list.append("KB" + item.security_KB)
-        ignore_kb_list.append("KB" + item.non_security_KB)
-
-        msg = str.format(">>{0}>> Only need security KB{1}, {2}",
-                         count, item.security_KB, item.product)
-        logger.info(msg)
-
-        msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
-                         item.security_KB, item.product)
-        logger.info(msg)
-
-        msg = str.format(">>{0}>> ... Ingore KB{1}, {2}",
-                         count, item.non_security_KB, item.product)
-        logger.info(msg)
-
-        download_file(browser, item.security_KB,
-                      item.product, target_download_folder)
-
-        msg = str.format(">>{0}>> ### finish KB{1}, {2}",
-                         count, item.security_KB, item.product)
-        logger.info(msg)
-
-        time.sleep(3 * 60)
-    else:
-        if(item.non_security_KB != "Not applicable"):
-            
-            current_kb_number = "KB" + item.non_security_KB
-
-            if current_kb_number in exclude_list:
-                logger.info(str.format(
-                    ">>{0}>> @@@Exclude the {1}", count, current_kb_number))
-                continue
-
-            kb_list.append("KB" + item.non_security_KB)
-
-            msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
-                             item.non_security_KB, item.product)
-            logger.info(msg)
-
-            download_file(browser, item.non_security_KB,
-                          item.product, target_download_folder)
+            download_file(browser, item.security_KB,
+                        item.product, target_download_folder)
 
             msg = str.format(">>{0}>> ### finish KB{1}, {2}",
-                             count, item.non_security_KB, item.product)
+                            count, item.security_KB, item.product)
             logger.info(msg)
 
             time.sleep(2 * 60)
+        else:
+            logger.info(current_kb_number + " is not in the expected kb list, ignore it.")
 
-        if(item.security_KB != "Not applicable"):
+        current_kb_number = "KB" + item.non_security_KB
+        if current_kb_number in expected_kb_list:
+            logger.info("Find the expected " + current_kb_number)
+
+            download_file(browser, item.security_KB,
+                        item.product, target_download_folder)
+            
+            msg = str.format(">>{0}>> ### finish KB{1}, {2}",
+                            count, item.security_KB, item.product)
+            logger.info(msg)
+
+            time.sleep(2 * 60)
+        else:
+            logger.info(current_kb_number + " is not in the expected kb list, ignore it.")
+
+else:
+    for item in msp_file_list:
+
+        count += 1
+
+        current_kb_number = "KB" + item.security_KB
+
+        if current_kb_number in expected_kb_list:
+            logger.info("Find the expected " + current_kb_number)
+
+            download_file(browser, item.security_KB,
+                        item.product, target_download_folder)
+
+            continue
+
+        current_kb_number = "KB" + item.non_security_KB
+
+        if current_kb_number in expected_kb_list:
+            logger.info("Find the expected " + current_kb_number)
+
+            download_file(browser, item.security_KB,
+                        item.product, target_download_folder)
+
+            continue
+
+        
+
+        if(item.security_greater_than_non_security):
 
             current_kb_number = "KB" + item.security_KB
 
             if current_kb_number in exclude_list:
-                logger.info(str.format(">>{0}>> @@@Exclude the {1}",
-                                       count, current_kb_number))
+                logger.info(str.format(
+                    ">>[{0}]>> @@@Exclude the {1}", count, current_kb_number))
                 continue
 
             kb_list.append("KB" + item.security_KB)
+            ignore_kb_list.append("KB" + item.non_security_KB)
+
+            msg = str.format(">>{0}>> Only need security KB{1}, {2}",
+                            count, item.security_KB, item.product)
+            logger.info(msg)
 
             msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
-                             item.security_KB, item.product)
+                            item.security_KB, item.product)
+            logger.info(msg)
+
+            msg = str.format(">>{0}>> ... Ingore KB{1}, {2}",
+                            count, item.non_security_KB, item.product)
             logger.info(msg)
 
             download_file(browser, item.security_KB,
-                          item.product, target_download_folder)
+                        item.product, target_download_folder)
 
             msg = str.format(">>{0}>> ### finish KB{1}, {2}",
-                             count, item.security_KB, item.product)
+                            count, item.security_KB, item.product)
             logger.info(msg)
 
-            time.sleep(2 * 60)
+            time.sleep(3 * 60)
+        else:
+            if(item.non_security_KB != "Not applicable"):
+                
+                current_kb_number = "KB" + item.non_security_KB
+
+                if current_kb_number in exclude_list:
+                    logger.info(str.format(
+                        ">>{0}>> @@@Exclude the {1}", count, current_kb_number))
+                    continue
+
+                kb_list.append("KB" + item.non_security_KB)
+
+                msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
+                                item.non_security_KB, item.product)
+                logger.info(msg)
+
+                download_file(browser, item.non_security_KB,
+                            item.product, target_download_folder)
+
+                msg = str.format(">>{0}>> ### finish KB{1}, {2}",
+                                count, item.non_security_KB, item.product)
+                logger.info(msg)
+
+                time.sleep(2 * 60)
+
+            if(item.security_KB != "Not applicable"):
+
+                current_kb_number = "KB" + item.security_KB
+
+                if current_kb_number in exclude_list:
+                    logger.info(str.format(">>{0}>> @@@Exclude the {1}",
+                                        count, current_kb_number))
+                    continue
+
+                kb_list.append("KB" + item.security_KB)
+
+                msg = str.format(">>{0}>> *** start KB{1}, {2}", count,
+                                item.security_KB, item.product)
+                logger.info(msg)
+
+                download_file(browser, item.security_KB,
+                            item.product, target_download_folder)
+
+                msg = str.format(">>{0}>> ### finish KB{1}, {2}",
+                                count, item.security_KB, item.product)
+                logger.info(msg)
+
+                time.sleep(2 * 60)
 
 f = open(current_script_folder + "kb_list.txt", "w")
 for element in kb_list:
