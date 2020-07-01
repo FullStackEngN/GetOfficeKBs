@@ -1,194 +1,149 @@
-import datetime
 import logging
-import time
 import os
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 def download_file(browser, kb_number, product, target_folder):
+
+    logger = logging.getLogger('download_kb')
 
     if not os.path.exists(target_folder):
         os.makedirs(target_folder)
 
     if not os.path.exists(target_folder + "screenshots"):
         os.makedirs(target_folder + "screenshots")
-        logging.info("Screenshots folder doesn't exist, create it: " + target_folder + "screenshots")
+        logging.info("Screenshots folder doesn't exist, create it: " +
+                     target_folder + "screenshots")
 
+    url = str.format(
+        'https://www.catalog.update.microsoft.com/Search.aspx?q={0}', kb_number)
+    logger.info(str.format(
+        "Start get download link for KB{0}: {1}", kb_number, url))
+    browser.get(url)
+
+    window_before = browser.window_handles[0]
+
+    try:
+        WebDriverWait(browser, 10).until(
+            EC.visibility_of_element_located((By.ID, "tableContainer")))
+    finally:
+        print("")
+
+    download_button_x64 = ""
+    download_button_x86 = ""
+
+    try:
+        title_element = browser.find_element_by_xpath(
+            '//*[@id="tableContainer"]/table/tbody/tr[2]/td[2]/a')
+        if title_element.text.find("64") > -1:
+            download_button_x64 = browser.find_element_by_xpath(
+                '//*[@id="tableContainer"]/table/tbody/tr[2]/td[8]/input')
+        elif title_element.text.find("32") > -1:
+            download_button_x86 = browser.find_element_by_xpath(
+                '//*[@id="tableContainer"]/table/tbody/tr[2]/td[8]/input')
+        else:
+            logger.error("Can't find 64bit or 32bit KB download button")
+            browser.save_screenshot(
+                target_folder + "screenshots\\KB" + kb_number + "_error.png")
+    except:
+        logger.exception("Can't find 64bit KB download button for KB" + kb_number)
+        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_x64_exception.png")
+
+    try:
+        title_element = browser.find_element_by_xpath(
+            '//*[@id="tableContainer"]/table/tbody/tr[3]/td[2]/a')
+        if title_element.text.find("64") > -1:
+            download_button_x64 = browser.find_element_by_xpath(
+                '//*[@id="tableContainer"]/table/tbody/tr[3]/td[8]/input')
+        elif title_element.text.find("32") > -1:
+            download_button_x86 = browser.find_element_by_xpath(
+                '//*[@id="tableContainer"]/table/tbody/tr[3]/td[8]/input')
+        else:
+            logger.error("Can't find 64bit or 32bit KB download button")
+            browser.save_screenshot(
+                target_folder + "screenshots\\KB" + kb_number + "_error.png")
+    except:
+        logger.exception("Can't find 32bit KB download button for KB" + kb_number)
+        browser.save_screenshot(
+            target_folder + "screenshots\\KB" + kb_number + "_x86_exception.png")
+
+    download_links = []
+
+    if download_button_x64 != "":
+        download_button_x64.click()
+        download_link_x64 = get_download_link_from_pop_up_window(
+            browser, window_before)
+
+        if download_link_x64 == "":
+            logger.error("Don't find download link for this KB" + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\KB" + kb_number + "_x64_error_link.png")
+        else:
+            download_links.append(["x64", kb_number, download_link_x64])
+
+        logger.debug(str.format(
+            "download link for 64bit KB{0} is {1}", kb_number, download_link_x64))
+
+    if download_button_x86 != "":
+        download_button_x86.click()
+        download_link_x86 = get_download_link_from_pop_up_window(
+            browser, window_before)
+
+        if download_link_x86 == "":
+            logger.error("Don't find download link for this KB" + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\KB" + kb_number + "_x86_error_link.png")
+        else:
+            download_links.append(["x86", kb_number, download_link_x86])
+
+        logger.debug(str.format(
+            "download link for 32bit KB{0} is {1}", kb_number, download_link_x86))
+
+    return download_links
+
+
+def get_download_link_from_pop_up_window(browser, window_handle):
     logger = logging.getLogger('download_kb')
 
-    url = str.format('https://support.microsoft.com/help/{0}', kb_number)
-    logger.info(str.format("Start download KB{0}: {1}", kb_number, url))
+    # get the window handle after a new window has opened
+    window_after = browser.window_handles[1]
 
-    browser.get(url)
-    time.sleep(10)
+    # switch on to new child window
+    browser.switch_to.window(window_after)
 
-    link_tag_32bit = ""
-    link_tag_64bit = ""
-    get_download_link_32bit = "false"
-    get_download_link_64bit = "false"
+    try:
+        WebDriverWait(browser, 10).until(
+            EC.visibility_of_element_located((By.ID, "downloadFiles")))
+    finally:
+        print("")
 
-    link_tag_list_32bit = []
-    link_tag_list_32bit.append(str.format(
-        "Download update {0} for 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download update KB{0} for 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download update KB{0} for 32-bit version of {1} for Office 2016", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download the 32-bit version of {0} update package now", product))
-    link_tag_list_32bit.append(str.format(
-        "Download security update {0} for the 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download security update KB{0} for the 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download security update KB {0} for the 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download the security update KB{0} for the 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download the security update KB{0} for 32-bit version of {1}", kb_number, product))
-    link_tag_list_32bit.append(str.format(
-        "Download the security update KB{0} for 32-bit version of {1}", kb_number, product))
+    # http://download.windowsupdate.com/c/msdownload/update/software/crup/2019/02/access-x-none_619933a5aaeb898b29f41d0c5660531d958e0abb.cab
+    link_elements = browser.find_elements_by_xpath(
+        '//*[@id="downloadFiles"]//a')
 
-    link_tag_list_64bit = []
-    link_tag_list_64bit.append(str.format(
-        "Download update {0} for 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download update KB{0} for 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download update KB{0} for 64-bit version of {1} for Office 2016", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download the 64-bit version of {0} update package now", product))
-    link_tag_list_64bit.append(str.format(
-        "Download security update {0} for the 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download security update KB{0} for the 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download security update KB {0} for the 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download the security update KB{0} for the 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download the security update KB{0} for 64-bit version of {1}", kb_number, product))
-    link_tag_list_64bit.append(str.format(
-        "Download the security update KB{0} for 64-bit version of {1}", kb_number, product))
+    download_link = ""
+    for element in link_elements:
+        if element.text.find("-x-none") > -1:
+            download_link = element.get_attribute("href")
 
-    logging.debug("Try to get 32bit download link element")
-    for item in link_tag_list_32bit:
-        if(get_download_link_32bit == "false"):
-            try:
-                link_tag_32bit = browser.find_element_by_link_text(item)
-                get_download_link_32bit = "true"
+    if download_link == "":
+        logger.error("Don't find download link for this KB")
 
-                logging.debug("Successfully get 32bit download link element")
-            except:
-                continue
-        else:
-            break
+    try:
+        element = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.ID, "downloadSettingsCloseButton"))
+        )
+    finally:
+        print("")
 
-    logging.debug("Try to get 64bit download link element")
-    for item in link_tag_list_64bit:
-        if(get_download_link_64bit == "false"):
-            try:
-                link_tag_64bit = browser.find_element_by_link_text(item)
-                get_download_link_64bit = "true"
-                logging.debug("Successfully get 64bit download link element")
-            except:
-                continue
-        else:
-            break
+    close_button = browser.find_element_by_xpath(
+        '//*[@id="downloadSettingsCloseButton"]')
+    close_button.click()
 
-    logging.debug("Try to get 32bit download link address")
-    if(get_download_link_32bit == "true"):
-        try:
-            href_link_tag_32bit = link_tag_32bit.get_attribute("href")
-            logger.info("32bit KB" + kb_number + ": " + href_link_tag_32bit)
-        except:
-            logger.error(
-                "Exception to get 32bit download link for this KB" + kb_number)
-            get_download_link_32bit = "false"
-            browser.save_screenshot(
-                target_folder + "screenshots\\KB" + kb_number + "_32bit_exception.png")
-    else:
-        browser.save_screenshot(target_folder + "screenshots\\KB" +
-                                kb_number + "_32bit_warning.png")
-        logger.warning("No matched text for 32bit KB" + kb_number)
+    browser.switch_to.window(window_handle)
 
-    logging.debug("Try to get 64bit download link address")
-    if(get_download_link_64bit == "true"):
-        try:
-            href_link_tag_64bit = link_tag_64bit.get_attribute("href")
-            logger.info("64bit KB" + kb_number + ": " + href_link_tag_64bit)
-        except:
-            logger.error(
-                "Exception to get 64bit download link for this KB" + kb_number)
-            get_download_link_64bit = "false"
-            browser.save_screenshot(
-                target_folder + "screenshots\\KB" + kb_number + "_64bit_exception.png")
-    else:
-        browser.save_screenshot(target_folder + "screenshots\\KB" +
-                                kb_number + "_64bit_warning.png")
-        logger.warning("No matched text for 64bit KB" + kb_number)
-
-    if(get_download_link_32bit == "true"):
-        try:
-            logger.info("******start download 32bit KB" + kb_number + " file")
-            logger.debug(href_link_tag_32bit)
-
-            # download 32bit file
-            browser.get(href_link_tag_32bit)
-
-            # browser.implicitly_wait(20)
-            time.sleep(30)
-
-            download_link = browser.find_elements_by_class_name(
-                "download-button")
-
-            logger.debug(len(download_link))
-            logger.debug(download_link[0].get_attribute("href"))
-
-            download_link_href = download_link[0].get_attribute("href")
-
-            browser.get(download_link_href)
-
-            time.sleep(30)
-        except:
-            logger.error("EXCEPTION TO DOWNLOAD 32bit KB" +
-                         kb_number + ": " + href_link_tag_32bit)
-            browser.save_screenshot(
-                target_folder + "error_screenshots\\KB" + kb_number + "_32bit_error.png")
-    else:
-        browser.save_screenshot(target_folder + "error_screenshots\\KB" +
-                                kb_number + "_32bit_error.png")
-        logger.error("Don't find download link for 32bit KB" +
-                     kb_number + " from " + url +", Product is " + product + ", Stop the download process.")
-
-    if(get_download_link_64bit == "true"):
-        try:
-            logger.info("******start download 64bit KB" + kb_number + " file")
-
-            # download 64bit file
-            logger.debug(href_link_tag_64bit)
-            browser.get(href_link_tag_64bit)
-
-            # browser.implicitly_wait(20)
-            time.sleep(30)
-
-            download_link = browser.find_elements_by_class_name(
-                "download-button")
-
-            logger.debug(len(download_link))
-            logger.debug(download_link[0].get_attribute("href"))
-
-            download_link_href = download_link[0].get_attribute("href")
-            browser.get(download_link_href)
-
-            time.sleep(30)
-        except:
-            logger.error("EXCEPTION TO DOWNLOAD 64bit KB" +
-                         kb_number + ": " + href_link_tag_64bit)
-            browser.save_screenshot(
-                target_folder + "error_screenshots\\KB" + kb_number + "_64bit_error.png")
-    else:
-        browser.save_screenshot(target_folder + "error_screenshots\\KB" +
-                                kb_number + "_64bit_error.png")
-        logger.error("Don't find download link for 64bit KB" +
-                     kb_number + " from " + url +", Product is " + product + ", Stop the download process.")
-
-    logger.info("Finish download KB" + kb_number)
+    return download_link
