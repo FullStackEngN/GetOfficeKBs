@@ -51,7 +51,7 @@ def get_kb_links(kb_number, excluded_kb_list, browser, target_download_folder):
 current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + "\\"
 
 FORMAT = '%(asctime)s %(levelname)s %(message)s'
-FILENAME = current_script_folder + "log.txt"
+FILENAME = current_script_folder + "script.log"
 
 logging.basicConfig(format=FORMAT, datefmt='%a, %d %b %Y %H:%M:%S',
                     filename=FILENAME, filemode='w', level=logging.INFO)
@@ -86,7 +86,7 @@ content = page.read().decode('utf-8')
 '''
 # save the html page to local text file for test
 logger.debug(type(content))
-f = open("content.txt","w")
+f = open("content.log","w")
 f.write(content)
 f.close()
 '''
@@ -99,7 +99,7 @@ logger.debug(type(doc))
 
 # logger.debug(etree.tostring(doc))
 
-f = open("doc.txt", "w")
+f = open("doc.log", "w")
 f.write(etree.tostring(doc).decode())
 f.close()
 '''
@@ -111,7 +111,7 @@ msp_table = doc.xpath('//*[@id="main"]/table[2]')
 '''
 #logger.debug (msp_table)
 
-f = open("table.txt", "w")
+f = open("table.log", "w")
 f.write(etree.tostring(msp_table[0]).decode())
 f.close()
 
@@ -147,7 +147,7 @@ for x in td_list:
 msg = ""
 new_line = '\n'
 
-f = open(current_script_folder + "msp_file_list.txt", "w")
+f = open(current_script_folder + "msp_file_list.log", "w")
 
 for element in msp_file_list:
     f.write(element.tostring())
@@ -276,19 +276,19 @@ else:
 
                 logger.info("###Finish component: " + item.filename + ", security update: KB" + item.security_KB)
 
-f = open(current_script_folder + "download_kb_list.txt", "w")
+f = open(current_script_folder + "download_kb_list.log", "w")
 for element in download_kb_list:
     f.write(element)
     f.write(new_line)
 f.close()
 
-f = open(current_script_folder + "ignored_kb_list.txt", "w")
+f = open(current_script_folder + "ignored_kb_list.log", "w")
 for element in ignored_kb_list:
     f.write(element)
     f.write(new_line)
 f.close()
 
-f = open(current_script_folder + "links_kb_list.txt", "w")
+f = open(current_script_folder + "links_kb_list.log", "w")
 for element in download_links:
     f.write(element[0] + ":" + element[1] + ":" + element[2])
     f.write(new_line)
