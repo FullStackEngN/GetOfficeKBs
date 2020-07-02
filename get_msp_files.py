@@ -246,10 +246,10 @@ else:
             logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
                         item.non_security_KB + "; security update: KB" + item.security_KB)
         else:
-            if(item.non_security_KB != "Not applicable"):
-                logger.info("***Start component: " + item.filename + ", non-security update: KB" +
-                            item.non_security_KB)
+            logger.info("***Start component: " + item.filename + ", non-security update: KB" +
+                        item.non_security_KB + "; security update: KB" + item.security_KB)
 
+            if(item.non_security_KB != "Not applicable"):
                 current_kb_number = "KB" + item.non_security_KB
 
                 download_kb_list.append(current_kb_number)
@@ -259,12 +259,9 @@ else:
                 download_links += links
 
                 logger.info(">>>Finish get links for " + current_kb_number)
-
-                logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
-                            item.non_security_KB)
+            
+            
             if(item.security_KB != "Not applicable"):
-                logger.info("***Start component: " + item.filename + ", security update: KB" + item.security_KB)
-
                 current_kb_number = "KB" + item.security_KB
 
                 download_kb_list.append(current_kb_number)
@@ -274,7 +271,9 @@ else:
                 download_links += links
                 logger.info(">>>Finish get links for " + current_kb_number)
 
-                logger.info("###Finish component: " + item.filename + ", security update: KB" + item.security_KB)
+
+            logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
+                        item.non_security_KB + "; security update: KB" + item.security_KB)
 
 f = open(current_script_folder + "download_kb_list.log", "w")
 for element in download_kb_list:
