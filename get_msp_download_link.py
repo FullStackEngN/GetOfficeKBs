@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def get_download_link(browser, kb_number, product, target_folder):
+def get_download_link(browser, kb_number, target_folder):
 
     logger = logging.getLogger('download_kb')
 
@@ -23,7 +23,7 @@ def get_download_link(browser, kb_number, product, target_folder):
     url = str.format(
         'https://www.catalog.update.microsoft.com/Search.aspx?q={0}', kb_number)
     logger.info(str.format(
-        "Start get download link for KB{0}: {1}", kb_number, url))
+        ">>>Start get download link for {0}: {1}", kb_number, url))
     browser.get(url)
 
     window_before = browser.window_handles[0]
@@ -32,7 +32,7 @@ def get_download_link(browser, kb_number, product, target_folder):
         WebDriverWait(browser, 30).until(
             EC.visibility_of_element_located((By.ID, "tableContainer")))
     except:
-        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_error.png")
+        browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_error.png")
     finally:
         pass
 
@@ -49,21 +49,21 @@ def get_download_link(browser, kb_number, product, target_folder):
             download_button_x86 = browser.find_element_by_xpath(
                 '//*[@id="tableContainer"]/table/tbody/tr[2]/td[8]/input')
         else:
-            logger.error("Can't find 64bit or 32bit KB download button for KB" + kb_number)
+            logger.error("Can't find 64bit or 32bit KB download button for " + kb_number)
             browser.save_screenshot(
-                target_folder + "screenshots\\KB" + kb_number + "_error.png")
+                target_folder + "screenshots\\" + kb_number + "_error.png")
     except:
         if download_button_x64 == "" and download_button_x86 == "":
-            logger.exception("Can't find 32bit and 64bit KB download button for KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_exception.png")
+            logger.exception("Can't find 32bit and 64bit KB download button for " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
         
         if download_button_x64 == "":
-            logger.exception("Can't find 64bit KB download button for KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_x64_exception.png")
+            logger.exception("Can't find 64bit KB download button for " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x64_exception.png")
 
         if download_button_x86 == "":
-            logger.exception("Can't find 32bit KB download button for KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_x86_exception.png")
+            logger.exception("Can't find 32bit KB download button for " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
 
     try:
         title_element = browser.find_element_by_xpath(
@@ -75,21 +75,21 @@ def get_download_link(browser, kb_number, product, target_folder):
             download_button_x86 = browser.find_element_by_xpath(
                 '//*[@id="tableContainer"]/table/tbody/tr[3]/td[8]/input')
         else:
-            logger.error("Can't find 64bit or 32bit KB download button for KB" + kb_number)
+            logger.error("Can't find 64bit or 32bit KB download button for " + kb_number)
             browser.save_screenshot(
-                target_folder + "screenshots\\KB" + kb_number + "_error.png")
+                target_folder + "screenshots\\" + kb_number + "_error.png")
     except:
         if download_button_x64 == "" and download_button_x86 == "":
-            logger.exception("Can't find 32bit and 64bit KB download button for KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_exception.png")
+            logger.exception("Can't find 32bit and 64bit KB download button for " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
         
         if download_button_x64 == "":
-            logger.exception("Can't find 64bit KB download button for KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_x64_exception.png")
+            logger.exception("Can't find 64bit KB download button for " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x64_exception.png")
 
         if download_button_x86 == "":
-            logger.exception("Can't find 32bit KB download button for KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_x86_exception.png")
+            logger.exception("Can't find 32bit KB download button for " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
 
     download_links = []
 
@@ -99,14 +99,14 @@ def get_download_link(browser, kb_number, product, target_folder):
             browser, window_before, target_folder, kb_number)
 
         if download_link_x64 == "":
-            logger.error("Don't find download link for this KB" + kb_number)
+            logger.error("Don't find download link for this " + kb_number)
             browser.save_screenshot(
-                target_folder + "screenshots\\KB" + kb_number + "_x64_error_link.png")
+                target_folder + "screenshots\\" + kb_number + "_x64_error_link.png")
         else:
             download_links.append(["x64", kb_number, download_link_x64])
 
         logger.debug(str.format(
-            "download link for 64bit KB{0} is {1}", kb_number, download_link_x64))
+            "download link for 64bit {0} is {1}", kb_number, download_link_x64))
 
     if download_button_x86 != "":
         download_button_x86.click()
@@ -114,14 +114,14 @@ def get_download_link(browser, kb_number, product, target_folder):
             browser, window_before, target_folder, kb_number)
 
         if download_link_x86 == "":
-            logger.error("Don't find download link for this KB" + kb_number)
+            logger.error("Don't find download link for this " + kb_number)
             browser.save_screenshot(
-                target_folder + "screenshots\\KB" + kb_number + "_x86_error_link.png")
+                target_folder + "screenshots\\" + kb_number + "_x86_error_link.png")
         else:
             download_links.append(["x86", kb_number, download_link_x86])
 
         logger.debug(str.format(
-            "download link for 32bit KB{0} is {1}", kb_number, download_link_x86))
+            "download link for 32bit {0} is {1}", kb_number, download_link_x86))
 
     return download_links
 
@@ -139,7 +139,7 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
         WebDriverWait(browser, 30).until(
             EC.visibility_of_element_located((By.ID, "downloadFiles")))
     except:
-        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_exception.png")
+        browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
     finally:
         pass
 
@@ -154,8 +154,8 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
                 download_link = element.get_attribute("href")
 
         if download_link == "":
-            logger.error("Don't find download link for this KB" + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_"+ random.randrange(10) + "_error.png")
+            logger.error("Don't find download link for this " + kb_number)
+            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_"+ random.randrange(10) + "_error.png")
     
         WebDriverWait(browser, 30).until(EC.element_to_be_clickable((By.ID, "downloadSettingsCloseButton")))
 
@@ -163,7 +163,7 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
             '//*[@id="downloadSettingsCloseButton"]')
         close_button.click()
     except:
-        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_exception.png")
+        browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
         browser.close()
     finally:
         browser.switch_to.window(window_handle)
