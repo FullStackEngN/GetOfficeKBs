@@ -28,10 +28,12 @@ def download_file(browser, kb_number, product, target_folder):
     window_before = browser.window_handles[0]
 
     try:
-        WebDriverWait(browser, 10).until(
+        WebDriverWait(browser, 30).until(
             EC.visibility_of_element_located((By.ID, "tableContainer")))
+    except:
+        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_error.png")
     finally:
-        print("")
+        pass
 
     download_button_x64 = ""
     download_button_x86 = ""
@@ -76,7 +78,7 @@ def download_file(browser, kb_number, product, target_folder):
     if download_button_x64 != "":
         download_button_x64.click()
         download_link_x64 = get_download_link_from_pop_up_window(
-            browser, window_before)
+            browser, window_before, target_folder, kb_number)
 
         if download_link_x64 == "":
             logger.error("Don't find download link for this KB" + kb_number)
@@ -91,7 +93,7 @@ def download_file(browser, kb_number, product, target_folder):
     if download_button_x86 != "":
         download_button_x86.click()
         download_link_x86 = get_download_link_from_pop_up_window(
-            browser, window_before)
+            browser, window_before, target_folder, kb_number)
 
         if download_link_x86 == "":
             logger.error("Don't find download link for this KB" + kb_number)
@@ -106,7 +108,7 @@ def download_file(browser, kb_number, product, target_folder):
     return download_links
 
 
-def get_download_link_from_pop_up_window(browser, window_handle):
+def get_download_link_from_pop_up_window(browser, window_handle, target_folder, kb_number):
     logger = logging.getLogger('download_kb')
 
     # get the window handle after a new window has opened
@@ -116,34 +118,35 @@ def get_download_link_from_pop_up_window(browser, window_handle):
     browser.switch_to.window(window_after)
 
     try:
-        WebDriverWait(browser, 10).until(
+        WebDriverWait(browser, 30).until(
             EC.visibility_of_element_located((By.ID, "downloadFiles")))
+    except:
+        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_exception.png")
     finally:
-        print("")
-
-    # http://download.windowsupdate.com/c/msdownload/update/software/crup/2019/02/access-x-none_619933a5aaeb898b29f41d0c5660531d958e0abb.cab
-    link_elements = browser.find_elements_by_xpath(
-        '//*[@id="downloadFiles"]//a')
-
-    download_link = ""
-    for element in link_elements:
-        if element.text.find("-x-none") > -1:
-            download_link = element.get_attribute("href")
-
-    if download_link == "":
-        logger.error("Don't find download link for this KB")
+        pass
 
     try:
-        element = WebDriverWait(browser, 10).until(
-            EC.element_to_be_clickable((By.ID, "downloadSettingsCloseButton"))
-        )
+        # http://download.windowsupdate.com/c/msdownload/update/software/crup/2019/02/access-x-none_619933a5aaeb898b29f41d0c5660531d958e0abb.cab
+        link_elements = browser.find_elements_by_xpath(
+            '//*[@id="downloadFiles"]//a')
+
+        download_link = ""
+        for element in link_elements:
+            if element.text.find("-x-none") > -1:
+                download_link = element.get_attribute("href")
+
+        if download_link == "":
+            logger.error("Don't find download link for this KB" + kb_number)
+    
+        WebDriverWait(browser, 30).until(EC.element_to_be_clickable((By.ID, "downloadSettingsCloseButton")))
+
+        close_button = browser.find_element_by_xpath(
+            '//*[@id="downloadSettingsCloseButton"]')
+        close_button.click()
+    except:
+        browser.save_screenshot(target_folder + "screenshots\\KB" + kb_number + "_exception.png")
+        browser.close()
     finally:
-        print("")
-
-    close_button = browser.find_element_by_xpath(
-        '//*[@id="downloadSettingsCloseButton"]')
-    close_button.click()
-
-    browser.switch_to.window(window_handle)
+        browser.switch_to.window(window_handle)
 
     return download_link

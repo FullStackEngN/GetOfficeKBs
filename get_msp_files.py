@@ -34,8 +34,8 @@ url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list
 target_download_folder = current_script_folder + "Office2013_KBs\\"
 
 
-# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
-#target_download_folder = current_script_folder + "Office2016_KBs"
+url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+target_download_folder = current_script_folder + "Office2016_KBs\\"
 
 logger.info("The download URL is " + url)
 logger.info("The target download folder is " + target_download_folder)
@@ -313,7 +313,7 @@ browser.quit()
 
 logger.info("Start download progress.")
 
-target_download_folder_x64 = current_script_folder + "Office2013_KBs\\x64\\"
+target_download_folder_x64 = target_download_folder + "x64\\"
 logger.info("The target download folder for 64bit KBs is " +
             target_download_folder_x64)
 
@@ -322,7 +322,7 @@ if not os.path.exists(target_download_folder_x64):
     logger.info(
         "The target download folder for 64bit KBs doesn't exist, create it.")
 
-target_download_folder_x86 = current_script_folder + "Office2013_KBs\\x86\\"
+target_download_folder_x86 = target_download_folder + "x86\\"
 logger.info("The target download folder for 32bit KBs is " +
             target_download_folder_x86)
 
