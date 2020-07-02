@@ -209,26 +209,33 @@ if len(expected_kb_list) > 0:
                     item.non_security_KB + "; security update: KB" + item.security_KB)
 
         current_kb_number = "KB" + item.security_KB
+
         download_kb_list.append(current_kb_number)
+
         links = get_kb_links_for_expected_kb(
             current_kb_number, excluded_kb_list, expected_kb_list, browser, target_download_folder)
         download_links += links
+
         logger.info(">>>Done get links for " + current_kb_number)
 
         current_kb_number = "KB" + item.non_security_KB
+
         download_kb_list.append(current_kb_number)
+
         links = get_kb_links_for_expected_kb(
             current_kb_number, excluded_kb_list, expected_kb_list, browser, target_download_folder)
         download_links += links
+
         logger.info(">>>Done get links for " + current_kb_number)
 
         logger.info("######Finish component: " + item.filename + ", non-security update: KB" +
                     item.non_security_KB + "; security update: KB" + item.security_KB)
 else:
     for item in msp_file_list:
-        if(item.security_greater_than_non_security):
-            logger.info("***Start component: " + item.filename + ", non-security update: KB" +
+        logger.info("***Start component: " + item.filename + ", non-security update: KB" +
                         item.non_security_KB + "; security update: KB" + item.security_KB)
+
+        if(item.security_greater_than_non_security):
 
             logger.info(">>>Only need download security KB" + item.security_KB +
                         ", Ignore non-security KB" + item.non_security_KB)
@@ -243,12 +250,7 @@ else:
 
             logger.info(">>>Finish get links for " + current_kb_number)
 
-            logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
-                        item.non_security_KB + "; security update: KB" + item.security_KB)
         else:
-            logger.info("***Start component: " + item.filename + ", non-security update: KB" +
-                        item.non_security_KB + "; security update: KB" + item.security_KB)
-
             if(item.non_security_KB != "Not applicable"):
                 current_kb_number = "KB" + item.non_security_KB
 
@@ -260,7 +262,6 @@ else:
 
                 logger.info(">>>Finish get links for " + current_kb_number)
             
-            
             if(item.security_KB != "Not applicable"):
                 current_kb_number = "KB" + item.security_KB
 
@@ -271,8 +272,7 @@ else:
                 download_links += links
                 logger.info(">>>Finish get links for " + current_kb_number)
 
-
-            logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
+        logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
                         item.non_security_KB + "; security update: KB" + item.security_KB)
 
 f = open(current_script_folder + "download_kb_list.log", "w")
