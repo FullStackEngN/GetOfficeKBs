@@ -19,7 +19,7 @@ FORMAT = '%(asctime)s %(levelname)s %(message)s'
 FILENAME = current_script_folder + "log.txt"
 
 logging.basicConfig(format=FORMAT, datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename=FILENAME, filemode='w', level=logging.DEBUG)
+                    filename=FILENAME, filemode='w', level=logging.INFO)
 
 logger = logging.getLogger('download_kb')
 
@@ -34,8 +34,8 @@ url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list
 target_download_folder = current_script_folder + "Office2013_KBs\\"
 
 
-url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
-target_download_folder = current_script_folder + "Office2016_KBs\\"
+#url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+#target_download_folder = current_script_folder + "Office2016_KBs\\"
 
 logger.info("The download URL is " + url)
 logger.info("The target download folder is " + target_download_folder)
