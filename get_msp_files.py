@@ -331,12 +331,15 @@ if not os.path.exists(target_download_folder_x86):
     logger.info(
         "The target download folder for 32bit KBs doesn't exist, create it.")
 
+tmp_file_name = ""
 for item in download_links:
     if item[0] == "x64":
-        wget.download(url=item[2], out=target_download_folder_x64)
+        tmp_file_name = wget.detect_filename(url=item[2])
+        wget.download(url=item[2], out=target_download_folder_x64 + "KB" + item[1] + "_" + tmp_file_name)
         
     if item[0] == "x86":
-        wget.download(url=item[2], out=target_download_folder_x86)
+        tmp_file_name = wget.detect_filename(url=item[2])
+        wget.download(url=item[2], out=target_download_folder_x86 + "KB" + item[1] + "_" + tmp_file_name)
 
 
 logger.info("##############################")
