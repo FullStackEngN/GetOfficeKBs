@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def download_file(browser, kb_number, product, target_folder):
+def get_download_link(browser, kb_number, product, target_folder):
 
     logger = logging.getLogger('download_kb')
 

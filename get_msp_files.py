@@ -3,7 +3,7 @@ import pathlib
 import os
 import urllib.request
 import wget
-from download_kb_file import download_file
+from get_msp_download_link import get_download_link
 from msp_file import MspFile
 from lxml import html
 from lxml import etree
@@ -153,8 +153,8 @@ try:
     for line in f:
         expected_kb_list.append(line.strip().upper())
 
-    logging.info("Read expected_kb_list file, length is :" +
-                 len(expected_kb_list))
+    logging.info("Read expected_kb_list file, length is: " +
+                 str(len(expected_kb_list)))
 except:
     logging.info("No expected_kb_list file, so download all KBs.")
 finally:
@@ -170,11 +170,18 @@ download_links = []
 if len(expected_kb_list) > 0:
     for item in msp_file_list:
 
+        count += 1
+        
         current_kb_number = "KB" + item.security_KB
         if current_kb_number in expected_kb_list:
             logger.info("Find the expected " + current_kb_number)
 
-            links = download_file(browser, item.security_KB,
+            if current_kb_number in exclude_list:
+                logger.info(str.format(
+                    ">>[{0}]>> @@@Exclude the {1}", count, current_kb_number))
+                continue
+
+            links = get_download_link(browser, item.security_KB,
                                   item.product, target_download_folder)
 
             download_links += links
@@ -191,7 +198,12 @@ if len(expected_kb_list) > 0:
         if current_kb_number in expected_kb_list:
             logger.info("Find the expected " + current_kb_number)
 
-            links = download_file(browser, item.non_security_KB,
+            if current_kb_number in exclude_list:
+                logger.info(str.format(
+                    ">>[{0}]>> @@@Exclude the {1}", count, current_kb_number))
+                continue
+
+            links = get_download_link(browser, item.non_security_KB,
                                   item.product, target_download_folder)
 
             download_links += links
@@ -236,7 +248,7 @@ else:
                              count, item.non_security_KB, item.product)
             logger.info(msg)
 
-            links = download_file(browser, item.security_KB,
+            links = get_download_link(browser, item.security_KB,
                                   item.product, target_download_folder)
             download_links += links
 
@@ -260,7 +272,7 @@ else:
                                  item.non_security_KB, item.product)
                 logger.info(msg)
 
-                links = download_file(browser, item.non_security_KB,
+                links = get_download_link(browser, item.non_security_KB,
                                       item.product, target_download_folder)
                 download_links += links
 
@@ -283,7 +295,7 @@ else:
                                  item.security_KB, item.product)
                 logger.info(msg)
 
-                links = download_file(browser, item.security_KB,
+                links = get_download_link(browser, item.security_KB,
                                       item.product, target_download_folder)
                 download_links += links
 
