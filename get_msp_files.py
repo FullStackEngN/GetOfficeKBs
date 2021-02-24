@@ -13,8 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from get_msp_download_link import get_download_link
 from msp_file import MspFile
-from unzip_file import extract_msp_from_cab
-
+from extract_msp import extract_msp_from_cab
 
 def check_kb_in_excluded_list(kb_number, excluded_kb_list):
     if current_kb_number in excluded_kb_list:
