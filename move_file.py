@@ -20,4 +20,3 @@ for root, dirs, files in os.walk(source_folder):
             print(target_file_path)
 
             shutil.move(soure_file_path, target_file_path)
-            

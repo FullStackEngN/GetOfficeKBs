@@ -15,6 +15,7 @@ from get_msp_download_link import get_download_link
 from msp_file import MspFile
 from extract_msp import extract_msp_from_cab
 
+
 def check_kb_in_excluded_list(kb_number, excluded_kb_list):
     if current_kb_number in excluded_kb_list:
         logger = logging.getLogger('download_kb')
@@ -68,7 +69,7 @@ logger.addHandler(console)
 logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
 
-#url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
+# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
 #target_download_folder = current_script_folder + "Office2013_KBs" + os.sep
 
 

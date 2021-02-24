@@ -32,7 +32,8 @@ def get_download_link(browser, kb_number, target_folder):
         WebDriverWait(browser, 30).until(
             EC.visibility_of_element_located((By.ID, "tableContainer")))
     except:
-        browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_error.png")
+        browser.save_screenshot(
+            target_folder + "screenshots\\" + kb_number + "_error.png")
     finally:
         pass
 
@@ -49,21 +50,28 @@ def get_download_link(browser, kb_number, target_folder):
             download_button_x86 = browser.find_element_by_xpath(
                 '//*[@id="tableContainer"]/table/tbody/tr[2]/td[8]/input')
         else:
-            logger.error("Can't find 64bit or 32bit KB download button for " + kb_number)
+            logger.error(
+                "Can't find 64bit or 32bit KB download button for " + kb_number)
             browser.save_screenshot(
                 target_folder + "screenshots\\" + kb_number + "_error.png")
     except:
         if download_button_x64 == "" and download_button_x86 == "":
-            logger.exception("Can't find 32bit and 64bit KB download button for " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
-        
+            logger.exception(
+                "Can't find 32bit and 64bit KB download button for " + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_exception.png")
+
         if download_button_x64 == "":
-            logger.exception("Can't find 64bit KB download button for " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x64_exception.png")
+            logger.exception(
+                "Can't find 64bit KB download button for " + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_x64_exception.png")
 
         if download_button_x86 == "":
-            logger.exception("Can't find 32bit KB download button for " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
+            logger.exception(
+                "Can't find 32bit KB download button for " + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
 
     try:
         title_element = browser.find_element_by_xpath(
@@ -75,21 +83,28 @@ def get_download_link(browser, kb_number, target_folder):
             download_button_x86 = browser.find_element_by_xpath(
                 '//*[@id="tableContainer"]/table/tbody/tr[3]/td[8]/input')
         else:
-            logger.error("Can't find 64bit or 32bit KB download button for " + kb_number)
+            logger.error(
+                "Can't find 64bit or 32bit KB download button for " + kb_number)
             browser.save_screenshot(
                 target_folder + "screenshots\\" + kb_number + "_error.png")
     except:
         if download_button_x64 == "" and download_button_x86 == "":
-            logger.exception("Can't find 32bit and 64bit KB download button for " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
-        
+            logger.exception(
+                "Can't find 32bit and 64bit KB download button for " + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_exception.png")
+
         if download_button_x64 == "":
-            logger.exception("Can't find 64bit KB download button for " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x64_exception.png")
+            logger.exception(
+                "Can't find 64bit KB download button for " + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_x64_exception.png")
 
         if download_button_x86 == "":
-            logger.exception("Can't find 32bit KB download button for " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
+            logger.exception(
+                "Can't find 32bit KB download button for " + kb_number)
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
 
     download_links = []
 
@@ -139,7 +154,8 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
         WebDriverWait(browser, 30).until(
             EC.visibility_of_element_located((By.ID, "downloadFiles")))
     except:
-        browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
+        browser.save_screenshot(
+            target_folder + "screenshots\\" + kb_number + "_exception.png")
     finally:
         pass
 
@@ -155,15 +171,18 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
 
         if download_link == "":
             logger.error("Don't find download link for this " + kb_number)
-            browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_"+ random.randrange(10) + "_error.png")
-    
-        WebDriverWait(browser, 30).until(EC.element_to_be_clickable((By.ID, "downloadSettingsCloseButton")))
+            browser.save_screenshot(
+                target_folder + "screenshots\\" + kb_number + "_" + random.randrange(10) + "_error.png")
+
+        WebDriverWait(browser, 30).until(EC.element_to_be_clickable(
+            (By.ID, "downloadSettingsCloseButton")))
 
         close_button = browser.find_element_by_xpath(
             '//*[@id="downloadSettingsCloseButton"]')
         close_button.click()
     except:
-        browser.save_screenshot(target_folder + "screenshots\\" + kb_number + "_exception.png")
+        browser.save_screenshot(
+            target_folder + "screenshots\\" + kb_number + "_exception.png")
         browser.close()
     finally:
         browser.switch_to.window(window_handle)
