@@ -3,8 +3,7 @@ import pathlib
 import os
 import urllib.request
 import wget
-from get_msp_download_link import get_download_link
-from msp_file import MspFile
+
 from lxml import html
 from lxml import etree
 from selenium import webdriver
@@ -12,11 +11,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
+from get_msp_download_link import get_download_link
+from msp_file import MspFile
+from unzip_file import extract_msp_from_cab
+
 
 def check_kb_in_excluded_list(kb_number, excluded_kb_list):
     if current_kb_number in excluded_kb_list:
         logger = logging.getLogger('download_kb')
-        logger.info(str.format(">>> @@@ ---{} is excluded by user", current_kb_number))
+        logger.info(str.format(
+            ">>> @@@ ---{} is excluded by user", current_kb_number))
         return True
     else:
         return False
@@ -65,12 +69,12 @@ logger.addHandler(console)
 logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
 
-url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
-target_download_folder = current_script_folder + "Office2013_KBs\\"
+#url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
+#target_download_folder = current_script_folder + "Office2013_KBs" + os.sep
 
 
-# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
-#target_download_folder = current_script_folder + "Office2016_KBs\\"
+url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
 
 logger.info("The download URL is " + url)
 logger.info("The target download folder is " + target_download_folder)
@@ -233,7 +237,7 @@ if len(expected_kb_list) > 0:
 else:
     for item in msp_file_list:
         logger.info("***Start component: " + item.filename + ", non-security update: KB" +
-                        item.non_security_KB + "; security update: KB" + item.security_KB)
+                    item.non_security_KB + "; security update: KB" + item.security_KB)
 
         if(item.security_greater_than_non_security):
 
@@ -261,7 +265,7 @@ else:
                 download_links += links
 
                 logger.info(">>>Finish get links for " + current_kb_number)
-            
+
             if(item.security_KB != "Not applicable"):
                 current_kb_number = "KB" + item.security_KB
 
@@ -273,7 +277,7 @@ else:
                 logger.info(">>>Finish get links for " + current_kb_number)
 
         logger.info("###Finish component: " + item.filename + ", non-security update: KB" +
-                        item.non_security_KB + "; security update: KB" + item.security_KB)
+                    item.non_security_KB + "; security update: KB" + item.security_KB)
 
 f = open(current_script_folder + "download_kb_list.log", "w")
 for element in download_kb_list:
@@ -297,7 +301,7 @@ browser.quit()
 logger.info("##############################")
 logger.info("Start download progress.")
 
-target_download_folder_x64 = target_download_folder + "x64\\"
+target_download_folder_x64 = target_download_folder + "x64"
 logger.info("The target download folder for 64bit KBs is " +
             target_download_folder_x64)
 
@@ -306,7 +310,7 @@ if not os.path.exists(target_download_folder_x64):
     logger.info(
         "The target download folder for 64bit KBs doesn't exist, create it.")
 
-target_download_folder_x86 = target_download_folder + "x86\\"
+target_download_folder_x86 = target_download_folder + "x86"
 logger.info("The target download folder for 32bit KBs is " +
             target_download_folder_x86)
 
@@ -319,14 +323,27 @@ tmp_file_name = ""
 for item in download_links:
     if item[0] == "x64":
         tmp_file_name = wget.detect_filename(url=item[2])
-        wget.download(url=item[2], out=target_download_folder_x64 +
-                      "KB" + item[1] + "_" + tmp_file_name)
+        wget.download(
+            url=item[2], out=target_download_folder_x64 + os.sep + item[1] + "_" + tmp_file_name)
 
     if item[0] == "x86":
         tmp_file_name = wget.detect_filename(url=item[2])
-        wget.download(url=item[2], out=target_download_folder_x86 +
-                      "KB" + item[1] + "_" + tmp_file_name)
+        wget.download(
+            url=item[2], out=target_download_folder_x86 + os.sep + item[1] + "_" + tmp_file_name)
 
 logger.info("Finish download progress.")
 logger.info("##############################")
+
+source_folder = target_download_folder_x86
+target_folder = target_download_folder_x86 + "_" + "msp"
+temp_folder = target_download_folder_x86 + "_" + "temp"
+
+extract_msp_from_cab(source_folder, target_folder, temp_folder)
+
+source_folder = target_download_folder_x64
+target_folder = target_download_folder_x64 + "_" + "msp"
+temp_folder = target_download_folder_x64 + "_" + "temp"
+
+extract_msp_from_cab(source_folder, target_folder, temp_folder)
+
 logger.info("Done...")
