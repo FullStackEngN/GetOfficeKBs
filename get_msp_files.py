@@ -69,12 +69,12 @@ logger.addHandler(console)
 logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
 
-# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
-#target_download_folder = current_script_folder + "Office2013_KBs" + os.sep
+url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files'
+target_download_folder = current_script_folder + "Office2013_KBs" + os.sep
 
 
-url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
-target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
+#url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+#target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
 
 logger.info("The download URL is " + url)
 logger.info("The target download folder is " + target_download_folder)

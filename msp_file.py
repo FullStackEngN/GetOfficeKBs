@@ -21,10 +21,20 @@ class MspFile:
 
         if self.non_security_release_date != "" and self.non_security_release_date != "Not applicable":
             if self.security_release_date != "" and self.security_release_date != "Not applicable":
-                non_security_release_date_var = datetime.strptime(
-                    self.non_security_release_date, '%B %d, %Y')
-                security_release_date_var = datetime.strptime(
-                    self.security_release_date, '%B %d, %Y')
+                
+                try:     
+                    non_security_release_date_var = datetime.strptime(
+                        self.non_security_release_date, '%B %d, %Y')
+                except ValueError:
+                    non_security_release_date_var = datetime.strptime(
+                        self.non_security_release_date, '%b %d, %Y')
+                
+                try:
+                    security_release_date_var = datetime.strptime(
+                        self.security_release_date, '%B %d, %Y')
+                except ValueError:
+                    security_release_date_var = datetime.strptime(
+                        self.security_release_date, '%b %d, %Y')
 
                 if(non_security_release_date_var < security_release_date_var):
                     self.security_greater_than_non_security = True
