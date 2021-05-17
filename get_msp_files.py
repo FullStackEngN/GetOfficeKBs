@@ -54,17 +54,28 @@ def get_kb_links(kb_number, excluded_kb_list, browser, target_download_folder):
 
 current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + "\\"
 
-FORMAT = '%(asctime)s %(levelname)s %(message)s'
 FILENAME = current_script_folder + "script.log"
 
-logging.basicConfig(format=FORMAT, datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename=FILENAME, filemode='w', level=logging.INFO)
-
 logger = logging.getLogger('download_kb')
+logger.setLevel(logging.DEBUG)
 
-console = logging.StreamHandler()
-console.setLevel(logging.WARNING)
-logger.addHandler(console)
+# create file handler which logs even debug messages
+fileHandler = logging.FileHandler(FILENAME, mode='w')
+fileHandler.setLevel(logging.INFO)
+
+# create console handler with a higher log level
+consoleHandler = logging.StreamHandler()
+consoleHandler.setLevel(logging.DEBUG)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter(
+    '%(asctime)s %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
+consoleHandler.setFormatter(formatter)
+fileHandler.setFormatter(formatter)
+
+# add the handlers to logger
+logger.addHandler(consoleHandler)
+logger.addHandler(fileHandler)
 
 logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
@@ -73,7 +84,7 @@ url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list
 target_download_folder = current_script_folder + "Office2013_KBs" + os.sep
 
 
-#url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
 #target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
 
 logger.info("The download URL is " + url)
