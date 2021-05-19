@@ -1,19 +1,18 @@
 import logging
-import pathlib
 import os
+import pathlib
 import urllib.request
-import wget
 
-from lxml import html
-from lxml import etree
+import wget
+from lxml import etree, html
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
+from extract_msp import extract_msp_from_cab
 from get_msp_download_link import get_download_link
 from msp_file import MspFile
-from extract_msp import extract_msp_from_cab
 
 
 def check_kb_in_excluded_list(kb_number, excluded_kb_list):
@@ -59,13 +58,13 @@ FILENAME = current_script_folder + "script.log"
 logger = logging.getLogger('download_kb')
 logger.setLevel(logging.DEBUG)
 
-# create file handler which logs even debug messages
-fileHandler = logging.FileHandler(FILENAME, mode='w')
-fileHandler.setLevel(logging.INFO)
-
 # create console handler with a higher log level
 consoleHandler = logging.StreamHandler()
 consoleHandler.setLevel(logging.DEBUG)
+
+# create file handler which logs even debug messages
+fileHandler = logging.FileHandler(FILENAME, mode='w')
+fileHandler.setLevel(logging.INFO)
 
 # create formatter and add it to the handlers
 formatter = logging.Formatter(
