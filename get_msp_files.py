@@ -83,8 +83,8 @@ url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list
 target_download_folder = current_script_folder + "Office2013_KBs" + os.sep
 
 
-# url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
-#target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
+url = 'https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files'
+target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
 
 logger.info("The download URL is " + url)
 logger.info("The target download folder is " + target_download_folder)
@@ -120,7 +120,7 @@ f.close()
 
 # //*[@id="main"]/div[2]/table
 # /html/body/div[3]/div/section/div/div[1]/main/div[2]/table
-msp_table = doc.xpath('//*[@id="main"]/table[2]')
+msp_table = doc.xpath('//*[@id="main"]/div[3]/table[2]')
 
 '''
 #logger.debug (msp_table)
@@ -136,10 +136,10 @@ logger.debug(type(table_string))
 # logger.debug(table_string)
 '''
 
-th_list = doc.xpath('//*[@id="main"]/table[2]/thead/tr/th')
-#logger.debug("Column: " + str(len(th_list)))
+th_list = doc.xpath('//*[@id="main"]/div[3]/table[2]/thead/tr/th')
+logger.debug("Column: " + str(len(th_list)))
 
-td_list = doc.xpath('//*[@id="main"]/table[2]/tbody/tr')
+td_list = doc.xpath('//*[@id="main"]/div[3]/table[2]/tbody/tr')
 logger.info("Rows: " + str(len(td_list)))
 
 msp_file_list = []
