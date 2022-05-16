@@ -170,18 +170,8 @@ f.close()
 
 logger.info("List length: " + str(len(msp_file_list)))
 
-firefoxProfile = webdriver.FirefoxProfile()
-firefoxProfile.set_preference("browser.download.folderList", 2)
-firefoxProfile.set_preference(
-    "browser.download.manager.showWhenStarting", False)
-firefoxProfile.set_preference(
-    "browser.download.dir", target_download_folder)
-firefoxProfile.set_preference(
-    "browser.helperApps.neverAsk.openFile", "application/octet-stream")
-firefoxProfile.set_preference(
-    "browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
+browser = webdriver.Firefox()
 
-browser = webdriver.Firefox(firefox_profile=firefoxProfile)
 
 excluded_kb_list = []
 try:
