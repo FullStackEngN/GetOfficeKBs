@@ -41,13 +41,13 @@ def get_download_link(browser, kb_number, target_folder):
     download_button_x86 = ""
 
     try:
-        title_element = browser.find_element_by_xpath(
+        title_element = browser.find_element("xpath",
             '//*[@id="tableContainer"]/table/tbody/tr[2]/td[2]/a')
         if title_element.text.find("64") > -1:
-            download_button_x64 = browser.find_element_by_xpath(
+            download_button_x64 = browser.find_element("xpath",
                 '//*[@id="tableContainer"]/table/tbody/tr[2]/td[8]/input')
         elif title_element.text.find("32") > -1:
-            download_button_x86 = browser.find_element_by_xpath(
+            download_button_x86 = browser.find_element("xpath",
                 '//*[@id="tableContainer"]/table/tbody/tr[2]/td[8]/input')
         else:
             logger.error(
@@ -74,13 +74,13 @@ def get_download_link(browser, kb_number, target_folder):
                 target_folder + "screenshots\\" + kb_number + "_x86_exception.png")
 
     try:
-        title_element = browser.find_element_by_xpath(
+        title_element = browser.find_element("xpath",
             '//*[@id="tableContainer"]/table/tbody/tr[3]/td[2]/a')
         if title_element.text.find("64") > -1:
-            download_button_x64 = browser.find_element_by_xpath(
+            download_button_x64 = browser.find_element("xpath",
                 '//*[@id="tableContainer"]/table/tbody/tr[3]/td[8]/input')
         elif title_element.text.find("32") > -1:
-            download_button_x86 = browser.find_element_by_xpath(
+            download_button_x86 = browser.find_element("xpath",
                 '//*[@id="tableContainer"]/table/tbody/tr[3]/td[8]/input')
         else:
             logger.error(
@@ -161,8 +161,7 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
 
     try:
         # http://download.windowsupdate.com/c/msdownload/update/software/crup/2019/02/access-x-none_619933a5aaeb898b29f41d0c5660531d958e0abb.cab
-        link_elements = browser.find_elements_by_xpath(
-            '//*[@id="downloadFiles"]//a')
+        link_elements = browser.find_elements("xpath", '//*[@id="downloadFiles"]//a')
 
         download_link = ""
         for element in link_elements:
@@ -177,7 +176,7 @@ def get_download_link_from_pop_up_window(browser, window_handle, target_folder, 
         WebDriverWait(browser, 30).until(EC.element_to_be_clickable(
             (By.ID, "downloadSettingsCloseButton")))
 
-        close_button = browser.find_element_by_xpath(
+        close_button = browser.find_element("xpath",
             '//*[@id="downloadSettingsCloseButton"]')
         close_button.click()
     except:
