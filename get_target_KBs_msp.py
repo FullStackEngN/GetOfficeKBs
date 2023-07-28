@@ -27,7 +27,7 @@ logger = create_logger_object(FILENAME)
 logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
 
-target_download_folder = current_script_folder + "Office2016_KBs" + os.sep
+target_download_folder = current_script_folder + "Folder_Office2016_KBs" + os.sep
 
 if not os.path.exists(target_download_folder):
     os.makedirs(target_download_folder)
@@ -35,7 +35,7 @@ if not os.path.exists(target_download_folder):
 
 expected_kb_list = []
 try:
-    f = open(current_script_folder + "expected_kb_list.txt", "r")
+    f = open(current_script_folder + "kb_list_expected.txt", "r")
 
     for line in f:
         expected_kb_list.append(line.strip().upper())
