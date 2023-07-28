@@ -77,11 +77,13 @@ for kb in checked_kb_list:
     logger.info("KB description url: " + kb_desc_url)
 
     browser.get(kb_desc_url)
-    #window_before = browser.window_handles[0]
+    # window_before = browser.window_handles[0]
 
     try:
         WebDriverWait(browser, 60).until(
-            EC.visibility_of_element_located(By.XPATH, "//h3[contains(text(),'File hash information')]")
+            EC.visibility_of_element_located(
+                By.XPATH, "//p[contains(text(),'-glb.exe')]"
+            )
         )
     except:
         browser.save_screenshot(
@@ -94,14 +96,18 @@ for kb in checked_kb_list:
         # file_hash_info_element = browser.find_element(
         #     "xpath", '//*[@id="ID0EDDBL"]').parent
 
-        file_hash_info_element = browser.find_element(
-            By.XPATH, "//h3[contains(text(),'File hash information')]"
-        )
+        # file_hash_info_element = browser.find_element(
+        #     By.XPATH, "//h3[contains(text(),'File hash information')]"
+        # )
 
-        section_element = file_hash_info_element.find_element(By.XPATH, "./..")
+        # section_element = file_hash_info_element.find_element(By.XPATH, "./..")
 
-        package_name = section_element.find_element(
-            By.XPATH, "//table/tbody/tr[1]/td[1]/p"
+        # package_name = section_element.find_element(
+        #     By.XPATH, "//table/tbody/tr[1]/td[1]/p"
+        # )
+
+        package_name = browser.find_element(
+            By.XPATH, "//p[contains(text(),'-glb.exe')]"
         )
 
         if package_name is not None:
