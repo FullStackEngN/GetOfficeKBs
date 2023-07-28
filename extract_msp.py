@@ -11,9 +11,9 @@ def run(cmd):
 
 
 def extract_msp_from_cab(source_folder, target_folder, temp_folder):
-    #source_folder = r"C:\Repos\GitHub\GetOfficeKBs\Office2016_KBs\x64"
-    #target_folder = r"C:\Repos\GitHub\GetOfficeKBs\Office2016_KBs\x64_msp"
-    #temp_folder = r"C:\Repos\GitHub\GetOfficeKBs\Office2016_KBs\temp"
+    # source_folder = r"C:\Repos\GitHub\GetOfficeKBs\Office2016_KBs\x64"
+    # target_folder = r"C:\Repos\GitHub\GetOfficeKBs\Office2016_KBs\x64_msp"
+    # temp_folder = r"C:\Repos\GitHub\GetOfficeKBs\Office2016_KBs\temp"
 
     if not os.path.exists(target_folder):
         os.makedirs(target_folder)
@@ -41,12 +41,13 @@ def extract_msp_from_cab(source_folder, target_folder, temp_folder):
                     for tempname in tempfiles:
                         temp_file_path = temproot + os.sep + tempname
 
-                        target_file_name = tempname + "_" + \
-                            KB_number + "_" + root[-3:] + ".msp"
+                        target_file_name = (
+                            tempname + "_" + KB_number + "_" + root[-3:] + ".msp"
+                        )
                         target_file_path = target_folder + os.sep + target_file_name
                         print(target_file_path)
 
                         shutil.move(temp_file_path, target_file_path)
 
-    if(os.path.isdir(temp_folder)):
+    if os.path.isdir(temp_folder):
         shutil.rmtree(temp_folder)
