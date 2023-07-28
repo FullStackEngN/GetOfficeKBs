@@ -64,20 +64,20 @@ if not os.path.exists(target_script_folder + "screenshots"):
 
 
 kb_component_list = []
+kb_component_error_list = []
 
 browser = webdriver.Edge()
 
 for kb in checked_kb_list:
-    logger.info("KB number: " + kb.upper())
+    logger.info("KB number: " + kb.strip().upper())
 
-    kb_number = re.sub("KB", "", kb.upper())
+    kb_number = re.sub("KB", "", kb.strip().upper())
     logger.info("KB number only: " + kb_number)
 
     kb_desc_url = "https://support.microsoft.com/kb/" + kb_number
     logger.info("KB description url: " + kb_desc_url)
 
     browser.get(kb_desc_url)
-    # window_before = browser.window_handles[0]
 
     try:
         WebDriverWait(browser, 60).until(
@@ -85,27 +85,16 @@ for kb in checked_kb_list:
                 By.XPATH, "//p[contains(text(),'-glb.exe')]"
             )
         )
-    except:
+    except Exception as ex:
         browser.save_screenshot(
             target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
         )
+
+        logger.info("Encounter exception when waiting element load: " + kb + ": " + str(ex))
     finally:
         pass
 
     try:
-        # file_hash_info_element = browser.find_element(
-        #     "xpath", '//*[@id="ID0EDDBL"]').parent
-
-        # file_hash_info_element = browser.find_element(
-        #     By.XPATH, "//h3[contains(text(),'File hash information')]"
-        # )
-
-        # section_element = file_hash_info_element.find_element(By.XPATH, "./..")
-
-        # package_name = section_element.find_element(
-        #     By.XPATH, "//table/tbody/tr[1]/td[1]/p"
-        # )
-
         package_name = browser.find_element(
             By.XPATH, "//p[contains(text(),'-glb.exe')]"
         )
@@ -113,7 +102,7 @@ for kb in checked_kb_list:
         if package_name is not None:
             logger.info("Package name: " + package_name.text)
 
-            kb_component_list.append(kb + "," + package_name.text)
+            kb_component_list.append(kb.strip().upper() + "," + package_name.text)
 
         else:
             logger.error("Can't find 64bit or 32bit KB component name for " + kb_number)
@@ -125,15 +114,24 @@ for kb in checked_kb_list:
             target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
         )
         logger.info("Encounter exception: " + kb + ": " + str(ex))
-
+        
+        kb_component_error_list.append(kb.strip().upper() + ", ")
     finally:
         pass
 
 browser.quit()
 
+logger.info("kb_list_component count: " + str(len(kb_component_list)))
+logger.info("kb_list_component_error count: " + str(len(kb_component_error_list)))
+
 kb_component_file = current_script_folder + "kb_list_component.txt"
 with open(kb_component_file, "w") as f:
     for item in kb_component_list:
+        f.write("%s\n" % item)
+
+kb_component_error_file = current_script_folder + "kb_list_component_error.txt"
+with open(kb_component_error_file, "w") as f:
+    for item in kb_component_error_list:
         f.write("%s\n" % item)
 
 logger.info("The script ends.")
