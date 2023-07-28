@@ -137,10 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Download files
-Office2013_KBs
-Office2016_KBs
-
 # Log files
 *.log
 *.txt
