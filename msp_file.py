@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class MspFile:
+class msp_file_item:
     filename = ""
     product = ""
     non_security_release_date = ""

@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from extract_msp import extract_msp_from_cab
 from get_msp_download_link import get_download_link
-from msp_file import MspFile
+from msp_file import msp_file_item
 from my_logger_object import create_logger_object
 
 
@@ -138,7 +138,7 @@ for x in td_list:
     security_KB = x[5].text_content().strip()
     security_greater_than_non_security = False
 
-    mspFile = MspFile(
+    mspFile = msp_file_item(
         filename,
         product,
         non_security_release_date,
@@ -161,7 +161,11 @@ f.close()
 
 logger.info("List length: " + str(len(msp_file_list)))
 
-browser = webdriver.Firefox()
+# options = webdriver.FirefoxOptions()
+# browser = webdriver.Firefox(options=options)
+options = webdriver.EdgeOptions()
+options.add_argument("--start-maximized")
+browser = webdriver.Edge(options=options)
 
 kb_list_excluded = []
 try:
@@ -250,11 +254,11 @@ else:
                 + ", Ignore non-security KB"
                 + item.non_security_KB
             )
+            current_kb_number = "KB" + item.security_KB
 
-            kb_list_download.append("KB" + item.security_KB)
+            kb_list_download.append(current_kb_number)
             kb_list_ignored.append("KB" + item.non_security_KB)
 
-            current_kb_number = "KB" + item.security_KB
             links = get_kb_links(
                 current_kb_number, kb_list_excluded, browser, target_download_folder
             )
@@ -267,6 +271,7 @@ else:
                 current_kb_number = "KB" + item.non_security_KB
 
                 kb_list_download.append(current_kb_number)
+                kb_list_ignored.append("KB" + item.security_KB)
 
                 links = get_kb_links(
                     current_kb_number, kb_list_excluded, browser, target_download_folder
