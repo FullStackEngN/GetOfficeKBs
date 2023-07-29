@@ -81,16 +81,21 @@ for kb in checked_kb_list:
 
     try:
         WebDriverWait(browser, 60).until(
-            EC.visibility_of_element_located(
-                By.XPATH, "//p[contains(text(),'-glb.exe')]"
+            EC.visibility_of_any_elements_located(
+                (By.XPATH, "//p[contains(text(),'-glb.exe')]")
             )
         )
+
+        #visibility_of_element_located
+        #visibility_of_any_elements_located
     except Exception as ex:
         browser.save_screenshot(
             target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
         )
 
-        logger.info("Encounter exception when waiting element load: " + kb + ": " + str(ex))
+        logger.info(
+            "Encounter exception when waiting element load: " + kb + ": " + str(ex)
+        )
     finally:
         pass
 
@@ -114,7 +119,7 @@ for kb in checked_kb_list:
             target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
         )
         logger.info("Encounter exception: " + kb + ": " + str(ex))
-        
+
         kb_component_error_list.append(kb.strip().upper() + ", ")
     finally:
         pass
