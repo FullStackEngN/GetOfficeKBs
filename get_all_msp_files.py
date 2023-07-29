@@ -15,8 +15,9 @@ from get_msp_download_link import get_download_link
 from msp_file import MspFile
 from my_logger_object import create_logger_object
 
-def check_kb_in_excluded_list(kb_number, excluded_kb_list):
-    if current_kb_number in excluded_kb_list:
+
+def check_kb_in_excluded_list(current_kb_number, kb_list_excluded):
+    if current_kb_number in kb_list_excluded:
         logger = logging.getLogger("download_kb")
         logger.info(str.format(">>> @@@ ---{} is excluded by user", current_kb_number))
         return True
@@ -25,25 +26,29 @@ def check_kb_in_excluded_list(kb_number, excluded_kb_list):
 
 
 def get_kb_links_for_expected_kb(
-    kb_number, excluded_kb_list, expected_kb_list, browser, target_download_folder
+    current_kb_number,
+    kb_list_excluded,
+    kb_list_expected,
+    browser,
+    target_download_folder,
 ):
     links = []
 
-    if check_kb_in_excluded_list(kb_number, excluded_kb_list):
+    if check_kb_in_excluded_list(current_kb_number, kb_list_excluded):
         return links
 
-    if current_kb_number in expected_kb_list:
-        links = get_download_link(browser, kb_number, target_download_folder)
+    if current_kb_number in kb_list_expected:
+        links = get_download_link(browser, current_kb_number, target_download_folder)
     else:
-        logger.info(kb_number + " is not in the expected kb list, ignore it.")
+        logger.info(current_kb_number + " is not in the expected kb list, ignore it.")
 
     return links
 
 
-def get_kb_links(kb_number, excluded_kb_list, browser, target_download_folder):
+def get_kb_links(kb_number, kb_list_excluded, browser, target_download_folder):
     links = []
 
-    if check_kb_in_excluded_list(kb_number, excluded_kb_list):
+    if check_kb_in_excluded_list(kb_number, kb_list_excluded):
         return links
 
     links = get_download_link(browser, kb_number, target_download_folder)
@@ -158,39 +163,37 @@ logger.info("List length: " + str(len(msp_file_list)))
 
 browser = webdriver.Firefox()
 
-
-excluded_kb_list = []
+kb_list_excluded = []
 try:
     f = open(current_script_folder + "kb_list_excluded.txt", "r")
 
     for line in f:
-        excluded_kb_list.append(line.strip().upper())
+        kb_list_excluded.append(line.strip().upper())
 
-    logging.info("Read excluded_kb_list file, length is: " + str(len(excluded_kb_list)))
+    logging.info("Read excluded_kb_list file, length is: " + str(len(kb_list_excluded)))
 except:
     logging.info("No excluded_kb_list file, so don't need exclude KBs.")
 finally:
     f.close()
 
-expected_kb_list = []
+kb_list_expected = []
 try:
     f = open(current_script_folder + "kb_list_expected.txt", "r")
 
     for line in f:
-        expected_kb_list.append(line.strip().upper())
+        kb_list_expected.append(line.strip().upper())
 
-    logging.info("Read expected_kb_list file, length is: " + str(len(expected_kb_list)))
+    logging.info("Read expected_kb_list file, length is: " + str(len(kb_list_expected)))
 except:
     logging.info("No expected_kb_list file, so download all KBs.")
 finally:
     f.close()
 
-download_kb_list = []
-ignored_kb_list = []
-
+kb_list_download = []
+kb_list_ignored = []
 download_links = []
 
-if len(expected_kb_list) > 0:
+if len(kb_list_expected) > 0:
     for item in msp_file_list:
         logger.info(
             "******Start component: "
@@ -201,29 +204,19 @@ if len(expected_kb_list) > 0:
             + item.security_KB
         )
 
-        current_kb_number = "KB" + item.security_KB
+        if item.security_kb_greater_than_non_security_kb():
+            current_kb_number = "KB" + item.security_KB
+            logger.info("******###Ignore non security kb: " + item.tostring())
+        else:
+            current_kb_number = "KB" + item.non_security_KB
+            logger.info("******###Ignore security kb: " + item.tostring())
 
-        download_kb_list.append(current_kb_number)
-
-        links = get_kb_links_for_expected_kb(
-            current_kb_number,
-            excluded_kb_list,
-            expected_kb_list,
-            browser,
-            target_download_folder,
-        )
-        download_links += links
-
-        logger.info(">>>Done get links for " + current_kb_number)
-
-        current_kb_number = "KB" + item.non_security_KB
-
-        download_kb_list.append(current_kb_number)
+        kb_list_download.append(current_kb_number)
 
         links = get_kb_links_for_expected_kb(
             current_kb_number,
-            excluded_kb_list,
-            expected_kb_list,
+            kb_list_excluded,
+            kb_list_expected,
             browser,
             target_download_folder,
         )
@@ -258,12 +251,12 @@ else:
                 + item.non_security_KB
             )
 
-            download_kb_list.append("KB" + item.security_KB)
-            ignored_kb_list.append("KB" + item.non_security_KB)
+            kb_list_download.append("KB" + item.security_KB)
+            kb_list_ignored.append("KB" + item.non_security_KB)
 
             current_kb_number = "KB" + item.security_KB
             links = get_kb_links(
-                current_kb_number, excluded_kb_list, browser, target_download_folder
+                current_kb_number, kb_list_excluded, browser, target_download_folder
             )
             download_links += links
 
@@ -273,25 +266,25 @@ else:
             if item.non_security_KB != "Not applicable":
                 current_kb_number = "KB" + item.non_security_KB
 
-                download_kb_list.append(current_kb_number)
+                kb_list_download.append(current_kb_number)
 
                 links = get_kb_links(
-                    current_kb_number, excluded_kb_list, browser, target_download_folder
+                    current_kb_number, kb_list_excluded, browser, target_download_folder
                 )
                 download_links += links
 
                 logger.info(">>>Finish get links for " + current_kb_number)
 
-            if item.security_KB != "Not applicable":
-                current_kb_number = "KB" + item.security_KB
+            # if item.security_KB != "Not applicable":
+            #     current_kb_number = "KB" + item.security_KB
 
-                download_kb_list.append(current_kb_number)
+            #     kb_list_download.append(current_kb_number)
 
-                links = get_kb_links(
-                    current_kb_number, excluded_kb_list, browser, target_download_folder
-                )
-                download_links += links
-                logger.info(">>>Finish get links for " + current_kb_number)
+            #     links = get_kb_links(
+            #         current_kb_number, kb_list_excluded, browser, target_download_folder
+            #     )
+            #     download_links += links
+            #     logger.info(">>>Finish get links for " + current_kb_number)
 
         logger.info(
             "###Finish component: "
@@ -303,13 +296,13 @@ else:
         )
 
 f = open(current_script_folder + "log_download_kb_list.log", "w")
-for element in download_kb_list:
+for element in kb_list_download:
     f.write(element)
     f.write(new_line)
 f.close()
 
 f = open(current_script_folder + "log_ignored_kb_list.log", "w")
-for element in ignored_kb_list:
+for element in kb_list_ignored:
     f.write(element)
     f.write(new_line)
 f.close()

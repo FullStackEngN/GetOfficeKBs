@@ -57,6 +57,14 @@ class MspFile:
 
                 if non_security_release_date_var < security_release_date_var:
                     self.security_greater_than_non_security = True
+            else:
+                self.security_greater_than_non_security = False
+        else:
+            if (
+                self.security_release_date != ""
+                and self.security_release_date != "Not applicable"
+            ):
+                self.security_greater_than_non_security = True
 
     def tostring(self):
         return (
