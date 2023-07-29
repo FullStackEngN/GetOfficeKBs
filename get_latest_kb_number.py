@@ -1,5 +1,5 @@
 # check whether there is duplicate kb number.
-# find the component responding for the kb number.
+# find the component corresponding for the kb number.
 # get latest update for the component.
 # compare with previous kb number, if same, just download. if not, download latest one.
 
@@ -15,40 +15,24 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
+def add_kb_to_list(logger, checked_kb_list, kb_number_str):
+    if kb_number_str in checked_kb_list:
+        logger.info("Duplicate KB number: " + kb_number_str)
+    else:
+        checked_kb_list.append(kb_number_str)
+
+
 current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + os.sep
 
 FILENAME = current_script_folder + "log_" + os.path.basename(__file__) + ".log"
-
 logger = create_logger_object(FILENAME)
 
 logger.info("The script starts running.")
 logger.info("The script folder is " + current_script_folder)
 
-checked_kb_list = []
-try:
-    f = open(current_script_folder + "kb_list_checked.txt", "r")
-
-    for line in f:
-        if "," in line:
-            tmp_list = line.split(",")
-
-            for i in tmp_list:
-                checked_kb_list.append(i)
-        else:
-            if line in checked_kb_list:
-                logger.info("Duplicate KB number: " + line.strip().upper())
-            else:
-                checked_kb_list.append(line.strip().upper())
-
-    logger.info("Read checked_kb_list file, length is: " + str(len(checked_kb_list)))
-except:
-    logger.info("Encounter exception when loading expected kb list.")
-
-finally:
-    f.close()
-
 target_script_folder = current_script_folder + "Folder_Latest_KB_Numbers" + os.sep
-logger.info("The target script folder is " + target_script_folder)
+logger.info("The target folder is " + target_script_folder)
 
 if not os.path.exists(target_script_folder):
     os.makedirs(target_script_folder)
@@ -62,6 +46,37 @@ if not os.path.exists(target_script_folder + "screenshots"):
         + "screenshots"
     )
 
+checked_kb_list = []
+
+try:
+    f = open(current_script_folder + "kb_list_checked.txt", "r")
+
+    for line in f:
+        kb_number_str = None
+
+        if "," in line:
+            tmp_list = line.split(",")
+
+            for i in tmp_list:
+                kb_number_str = i.strip().upper()
+
+                if len(kb_number_str) == 0:
+                    continue
+
+                add_kb_to_list(logger, checked_kb_list, kb_number_str)
+        else:
+            kb_number_str = line.strip().upper()
+
+            if len(kb_number_str) == 0:
+                continue
+
+            add_kb_to_list(logger, checked_kb_list, kb_number_str)
+
+    logger.info("Read checked_kb_list file, length is: " + str(len(checked_kb_list)))
+except:
+    logger.info("Encounter exception when loading expected kb list.")
+finally:
+    f.close()
 
 kb_component_list = []
 kb_component_error_list = []
@@ -69,9 +84,11 @@ kb_component_error_list = []
 browser = webdriver.Edge()
 
 for kb in checked_kb_list:
-    logger.info("KB number: " + kb.strip().upper())
+    kb_str = kb.strip().upper()
 
-    kb_number = re.sub("KB", "", kb.strip().upper())
+    logger.info("KB number: " + kb_str)
+
+    kb_number = re.sub("KB", "", kb_str)
     logger.info("KB number only: " + kb_number)
 
     kb_desc_url = "https://support.microsoft.com/kb/" + kb_number
@@ -79,50 +96,44 @@ for kb in checked_kb_list:
 
     browser.get(kb_desc_url)
 
+    package_name = None
+
     try:
-        WebDriverWait(browser, 60).until(
-            EC.visibility_of_any_elements_located(
+        package_name = WebDriverWait(browser, 30).until(
+            EC.visibility_of_element_located(
                 (By.XPATH, "//p[contains(text(),'-glb.exe')]")
             )
         )
-
-        #visibility_of_element_located
-        #visibility_of_any_elements_located
-    except Exception as ex:
-        browser.save_screenshot(
-            target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
-        )
-
-        logger.info(
-            "Encounter exception when waiting element load: " + kb + ": " + str(ex)
-        )
-    finally:
-        pass
-
-    try:
-        package_name = browser.find_element(
-            By.XPATH, "//p[contains(text(),'-glb.exe')]"
-        )
-
-        if package_name is not None:
-            logger.info("Package name: " + package_name.text)
-
-            kb_component_list.append(kb.strip().upper() + "," + package_name.text)
-
-        else:
-            logger.error("Can't find 64bit or 32bit KB component name for " + kb_number)
-            browser.save_screenshot(
-                target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
+    except:
+        try:
+            package_name = WebDriverWait(browser, 30).until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, "//span[contains(text(),'-glb.exe')]")
+                )
             )
-    except Exception as ex:
-        browser.save_screenshot(
-            target_script_folder + "screenshots" + os.sep + kb_number + "_error.png"
-        )
-        logger.info("Encounter exception: " + kb + ": " + str(ex))
+        except Exception as ex:
+            browser.save_screenshot(
+                target_script_folder + "screenshots" + os.sep + kb_str + "_error.png"
+            )
 
-        kb_component_error_list.append(kb.strip().upper() + ", ")
-    finally:
-        pass
+            logger.info(
+                "Encounter exception when waiting/loading element for "
+                + kb_str
+                + " : "
+                + str(ex)
+            )
+
+            kb_component_error_list.append(kb_str + ", ")
+
+    if package_name is not None:
+        logger.info("Package name: " + package_name.text)
+
+        kb_component_list.append(kb_str + "," + package_name.text)
+    else:
+        logger.error("Can't find component name for " + kb_str)
+        browser.save_screenshot(
+            target_script_folder + "screenshots" + os.sep + kb_str + "_error.png"
+        )
 
 browser.quit()
 
