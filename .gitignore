@@ -138,7 +138,6 @@ dmypy.json
 cython_debug/
 
 # Log files
-*.log
 *.txt
 
 # VSCode files
@@ -147,3 +146,4 @@ cython_debug/
 # My Custom files
 Folder_*
 log_*
+output_*

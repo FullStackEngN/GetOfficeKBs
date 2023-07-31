@@ -151,7 +151,7 @@ for x in td_list:
 msg = ""
 new_line = "\n"
 
-f = open(current_script_folder + "log_msp_file_list.log", "w")
+f = open(current_script_folder + "output_msp_file_list.log", "w")
 
 for element in msp_file_list:
     f.write(element.tostring())
@@ -289,19 +289,19 @@ else:
             + item.security_KB
         )
 
-f = open(current_script_folder + "log_download_kb_list.log", "w")
+f = open(current_script_folder + "output_download_kb_list.log", "w")
 for element in kb_list_download:
     f.write(element)
     f.write(new_line)
 f.close()
 
-f = open(current_script_folder + "log_ignored_kb_list.log", "w")
+f = open(current_script_folder + "output_ignored_kb_list.log", "w")
 for element in kb_list_ignored:
     f.write(element)
     f.write(new_line)
 f.close()
 
-f = open(current_script_folder + "log_links_kb_list.log", "w")
+f = open(current_script_folder + "output_kb_links_list.log", "w")
 for element in download_links:
     f.write(element[0] + ":" + element[1] + ":" + element[2])
     f.write(new_line)
