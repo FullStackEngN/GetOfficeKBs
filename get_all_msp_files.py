@@ -4,7 +4,7 @@ import pathlib
 import urllib.request
 
 import wget
-from lxml import etree, html
+from lxml import html
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -66,7 +66,6 @@ logger.info("The script folder is " + current_script_folder)
 
 url = "https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2013#list-of-all-msp-files"
 target_download_folder = current_script_folder + "Folder_Office2013_KBs" + os.sep
-
 
 url = "https://docs.microsoft.com/en-us/officeupdates/msp-files-office-2016#list-of-all-msp-files"
 target_download_folder = current_script_folder + "Folder_Office2016_KBs" + os.sep
@@ -210,9 +209,11 @@ if len(kb_list_expected) > 0:
 
         if item.security_kb_greater_than_non_security_kb():
             current_kb_number = "KB" + item.security_KB
+            kb_list_ignored.append("KB" + item.non_security_KB)
             logger.info("******###Ignore non security kb: " + item.tostring())
         else:
             current_kb_number = "KB" + item.non_security_KB
+            kb_list_ignored.append("KB" + item.security_KB)
             logger.info("******###Ignore security kb: " + item.tostring())
 
         kb_list_download.append(current_kb_number)
@@ -251,45 +252,33 @@ else:
             logger.info(
                 ">>>Only need download security KB"
                 + item.security_KB
+                + ", release date "
+                + item.security_release_date
                 + ", Ignore non-security KB"
                 + item.non_security_KB
             )
             current_kb_number = "KB" + item.security_KB
-
-            kb_list_download.append(current_kb_number)
             kb_list_ignored.append("KB" + item.non_security_KB)
-
-            links = get_kb_links(
-                current_kb_number, kb_list_excluded, browser, target_download_folder
-            )
-            download_links += links
-
-            logger.info(">>>Finish get links for " + current_kb_number)
-
         else:
-            if item.non_security_KB != "Not applicable":
-                current_kb_number = "KB" + item.non_security_KB
+            logger.info(
+                ">>><<<Only need download non-security KB"
+                + item.non_security_KB
+                + ", release date "
+                + item.non_security_release_date
+                + ", Ignore security KB"
+                + item.security_KB
+            )
+            current_kb_number = "KB" + item.non_security_KB
+            kb_list_ignored.append("KB" + item.security_KB)
 
-                kb_list_download.append(current_kb_number)
-                kb_list_ignored.append("KB" + item.security_KB)
+        kb_list_download.append(current_kb_number)
 
-                links = get_kb_links(
-                    current_kb_number, kb_list_excluded, browser, target_download_folder
-                )
-                download_links += links
+        links = get_kb_links(
+            current_kb_number, kb_list_excluded, browser, target_download_folder
+        )
+        download_links += links
 
-                logger.info(">>>Finish get links for " + current_kb_number)
-
-            # if item.security_KB != "Not applicable":
-            #     current_kb_number = "KB" + item.security_KB
-
-            #     kb_list_download.append(current_kb_number)
-
-            #     links = get_kb_links(
-            #         current_kb_number, kb_list_excluded, browser, target_download_folder
-            #     )
-            #     download_links += links
-            #     logger.info(">>>Finish get links for " + current_kb_number)
+        logger.info(">>>Finish get links for " + current_kb_number)
 
         logger.info(
             "###Finish component: "
