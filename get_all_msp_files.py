@@ -216,7 +216,7 @@ if len(kb_list_expected) > 0:
             kb_list_ignored.append("KB" + item.security_KB)
             logger.info("******###Ignore security kb: " + item.tostring())
 
-        kb_list_download.append(current_kb_number)
+        kb_list_download.append(current_kb_number + "," + item.filename)
 
         links = get_kb_links_for_expected_kb(
             current_kb_number,
@@ -271,7 +271,7 @@ else:
             current_kb_number = "KB" + item.non_security_KB
             kb_list_ignored.append("KB" + item.security_KB)
 
-        kb_list_download.append(current_kb_number)
+        kb_list_download.append(current_kb_number + "," + item.filename)
 
         links = get_kb_links(
             current_kb_number, kb_list_excluded, browser, target_download_folder
