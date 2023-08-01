@@ -33,28 +33,28 @@ if not os.path.exists(target_download_folder):
     os.makedirs(target_download_folder)
     logger.info("The target download folder doesn't exist, create it.")
 
-expected_kb_list = []
+kb_list_expected = []
 try:
     f = open(current_script_folder + "kb_list_expected.txt", "r")
 
     for line in f:
-        expected_kb_list.append(line.strip().upper())
+        kb_list_expected.append(line.strip().upper())
 
-    logging.info("Read expected_kb_list file, length is: " + str(len(expected_kb_list)))
+    logging.info("Read kb_list_expected file, length is: " + str(len(kb_list_expected)))
 except Exception as ex:
     logging.info("Encounter exception when loading expected kb list." + str(ex))
 finally:
     f.close()
 
-download_kb_list = []
-ignored_kb_list = []
+kb_list_download = []
+kb_list_ignored = []
 download_links = []
 
 browser = webdriver.Firefox()
 
-if len(expected_kb_list) > 0:
-    for kb_number in expected_kb_list:
-        download_kb_list.append(kb_number)
+if len(kb_list_expected) > 0:
+    for kb_number in kb_list_expected:
+        kb_list_download.append(kb_number)
 
         current_kb_number = kb_number
 

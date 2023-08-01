@@ -16,9 +16,8 @@ from msp_file import msp_file_item
 from my_logger_object import create_logger_object
 
 
-def check_kb_in_excluded_list(current_kb_number, kb_list_excluded):
+def check_kb_in_excluded_list(current_kb_number, kb_list_excluded, logger):
     if current_kb_number in kb_list_excluded:
-        logger = logging.getLogger("download_kb")
         logger.info(str.format(">>> @@@ ---{} is excluded by user", current_kb_number))
         return True
     else:
@@ -31,10 +30,11 @@ def get_kb_links_for_expected_kb(
     kb_list_expected,
     browser,
     target_download_folder,
+    logger,
 ):
     links = []
 
-    if check_kb_in_excluded_list(current_kb_number, kb_list_excluded):
+    if check_kb_in_excluded_list(current_kb_number, kb_list_excluded, logger):
         return links
 
     if current_kb_number in kb_list_expected:
@@ -45,10 +45,10 @@ def get_kb_links_for_expected_kb(
     return links
 
 
-def get_kb_links(kb_number, kb_list_excluded, browser, target_download_folder):
+def get_kb_links(kb_number, kb_list_excluded, browser, target_download_folder, logger):
     links = []
 
-    if check_kb_in_excluded_list(kb_number, kb_list_excluded):
+    if check_kb_in_excluded_list(kb_number, kb_list_excluded, logger):
         return links
 
     links = get_download_link(browser, kb_number, target_download_folder)
@@ -214,7 +214,7 @@ if len(kb_list_expected) > 0:
         else:
             current_kb_number = "KB" + item.non_security_KB
             kb_list_ignored.append("KB" + item.security_KB)
-            logger.info("******###Ignore security kb: " + item.tostring())
+            logger.info("******@@@Ignore security kb: " + item.tostring())
 
         kb_list_download.append(current_kb_number + "," + item.filename)
 
@@ -224,6 +224,7 @@ if len(kb_list_expected) > 0:
             kb_list_expected,
             browser,
             target_download_folder,
+            logger,
         )
         download_links += links
 
@@ -249,32 +250,20 @@ else:
         )
 
         if item.security_greater_than_non_security:
-            logger.info(
-                ">>>Only need download security KB"
-                + item.security_KB
-                + ", release date "
-                + item.security_release_date
-                + ", Ignore non-security KB"
-                + item.non_security_KB
-            )
+            logger.info("******###Ignore non security kb: " + item.tostring())
+
             current_kb_number = "KB" + item.security_KB
             kb_list_ignored.append("KB" + item.non_security_KB)
         else:
-            logger.info(
-                ">>><<<Only need download non-security KB"
-                + item.non_security_KB
-                + ", release date "
-                + item.non_security_release_date
-                + ", Ignore security KB"
-                + item.security_KB
-            )
+            logger.info("******@@@Ignore security kb: " + item.tostring())
+
             current_kb_number = "KB" + item.non_security_KB
             kb_list_ignored.append("KB" + item.security_KB)
 
         kb_list_download.append(current_kb_number + "," + item.filename)
 
         links = get_kb_links(
-            current_kb_number, kb_list_excluded, browser, target_download_folder
+            current_kb_number, kb_list_excluded, browser, target_download_folder, logger
         )
         download_links += links
 
@@ -289,19 +278,19 @@ else:
             + item.security_KB
         )
 
-f = open(current_script_folder + "output_download_kb_list.log", "w")
+f = open(current_script_folder + "tmp_download_kb_list.log", "w")
 for element in kb_list_download:
     f.write(element)
     f.write(new_line)
 f.close()
 
-f = open(current_script_folder + "output_ignored_kb_list.log", "w")
+f = open(current_script_folder + "tmp_ignored_kb_list.log", "w")
 for element in kb_list_ignored:
     f.write(element)
     f.write(new_line)
 f.close()
 
-f = open(current_script_folder + "output_kb_links_list.log", "w")
+f = open(current_script_folder + "tmp_kb_links_list.log", "w")
 for element in download_links:
     f.write(element[0] + ":" + element[1] + ":" + element[2])
     f.write(new_line)

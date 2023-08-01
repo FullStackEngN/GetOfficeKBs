@@ -15,11 +15,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def add_kb_to_list(logger, kb_list_checked, kb_number_str):
-    if kb_number_str in kb_list_checked:
+def add_kb_to_list(logger, kb_list_specified, kb_number_str):
+    if kb_number_str in kb_list_specified:
         logger.info("Duplicate KB number: " + kb_number_str)
     else:
-        kb_list_checked.append(kb_number_str)
+        kb_list_specified.append(kb_number_str)
 
 
 current_script_folder = str(pathlib.Path(__file__).parent.absolute()) + os.sep
@@ -48,7 +48,7 @@ if not os.path.exists(target_script_folder + "screenshots"):
 checked_kb_list = []
 
 try:
-    f = open(current_script_folder + "kb_list_checked.txt", "r")
+    f = open(current_script_folder + "kb_list_specified.txt", "r")
 
     for line in f:
         kb_number_str = None
@@ -71,13 +71,13 @@ try:
 
             add_kb_to_list(logger, checked_kb_list, kb_number_str)
 
-    logger.info("Read kb_list_checked file, length is: " + str(len(checked_kb_list)))
+    logger.info("Read kb_list_specified file, length is: " + str(len(checked_kb_list)))
 except Exception as ex:
-    logger.info("Encounter exception when loading kb_list_checked file." + str(ex))
+    logger.info("Encounter exception when loading kb_list_specified file." + str(ex))
 finally:
     f.close()
 
-kb_component_list = []
+kb_msp_file_name_list = []
 kb_component_error_list = []
 
 browser = webdriver.Edge()
@@ -140,7 +140,7 @@ for kb in checked_kb_list:
         else:
             component_name = package_name_str
 
-        kb_component_list.append(kb_str + "," + package_name_str + "," + component_name)
+        kb_msp_file_name_list.append(kb_str + "," + package_name_str + "," + component_name)
     else:
         logger.error("Can't find component name for " + kb_str)
         browser.save_screenshot(
@@ -149,19 +149,19 @@ for kb in checked_kb_list:
 
 browser.quit()
 
-logger.info("kb_list_component count: " + str(len(kb_component_list)))
-logger.info("kb_list_component_error count: " + str(len(kb_component_error_list)))
+logger.info("kb_msp_file_name_list count: " + str(len(kb_msp_file_name_list)))
+logger.info("kb_msp_file_name_list_error count: " + str(len(kb_component_error_list)))
 
 
-kb_component_list.sort()
-kb_component_file = current_script_folder + "output_component_for_checked_kb.txt"
+kb_msp_file_name_list.sort()
+kb_component_file = current_script_folder + "output_msp_file_name_for_specified_kb.txt"
 with open(kb_component_file, "w") as f:
-    for item in kb_component_list:
+    for item in kb_msp_file_name_list:
         f.write("%s\n" % item)
 
 kb_component_error_list.sort()
 kb_component_error_file = (
-    current_script_folder + "output_component_for_checked_kb_error.txt"
+    current_script_folder + "output_msp_file_name_for_specified_kb_error.txt"
 )
 with open(kb_component_error_file, "w") as f:
     for item in kb_component_error_list:
