@@ -15,7 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def add_kb_to_list(logger, kb_list_specified, kb_number_str):
+def add_kb_to_list(kb_list_specified, kb_number_str, logger):
     if kb_number_str in kb_list_specified:
         logger.info("Duplicate KB number: " + kb_number_str)
     else:
@@ -45,7 +45,7 @@ if not os.path.exists(target_script_folder + "screenshots"):
         + "screenshots"
     )
 
-checked_kb_list = []
+kb_list_specified = []
 
 try:
     f = open(current_script_folder + "kb_list_specified.txt", "r")
@@ -62,27 +62,27 @@ try:
                 if len(kb_number_str) == 0:
                     continue
 
-                add_kb_to_list(logger, checked_kb_list, kb_number_str)
+                add_kb_to_list(kb_list_specified, kb_number_str, logger)
         else:
             kb_number_str = line.strip().upper()
 
             if len(kb_number_str) == 0:
                 continue
 
-            add_kb_to_list(logger, checked_kb_list, kb_number_str)
+            add_kb_to_list(kb_list_specified, kb_number_str, logger)
 
-    logger.info("Read kb_list_specified file, length is: " + str(len(checked_kb_list)))
+    logger.info("Read kb_list_specified file, length is: " + str(len(kb_list_specified)))
 except Exception as ex:
     logger.info("Encounter exception when loading kb_list_specified file." + str(ex))
 finally:
     f.close()
 
 kb_msp_file_name_list = []
-kb_component_error_list = []
+kb_msp_file_name_error_list = []
 
 browser = webdriver.Edge()
 
-for kb in checked_kb_list:
+for kb in kb_list_specified:
     kb_str = kb.strip().upper()
     logger.info("KB number: " + kb_str)
 
@@ -121,7 +121,7 @@ for kb in checked_kb_list:
                 + str(ex)
             )
 
-            kb_component_error_list.append(kb_str + ", ")
+            kb_msp_file_name_error_list.append(kb_str + ", ")
 
     if package_name is not None:
         package_name_str = package_name.text
@@ -140,7 +140,9 @@ for kb in checked_kb_list:
         else:
             component_name = package_name_str
 
-        kb_msp_file_name_list.append(kb_str + "," + package_name_str + "," + component_name)
+        kb_msp_file_name_list.append(
+            kb_str + "," + package_name_str + "," + component_name
+        )
     else:
         logger.error("Can't find component name for " + kb_str)
         browser.save_screenshot(
@@ -150,7 +152,7 @@ for kb in checked_kb_list:
 browser.quit()
 
 logger.info("kb_msp_file_name_list count: " + str(len(kb_msp_file_name_list)))
-logger.info("kb_msp_file_name_list_error count: " + str(len(kb_component_error_list)))
+logger.info("kb_msp_file_name_list_error count: " + str(len(kb_msp_file_name_error_list)))
 
 
 kb_msp_file_name_list.sort()
@@ -159,12 +161,12 @@ with open(kb_component_file, "w") as f:
     for item in kb_msp_file_name_list:
         f.write("%s\n" % item)
 
-kb_component_error_list.sort()
+kb_msp_file_name_error_list.sort()
 kb_component_error_file = (
     current_script_folder + "output_msp_file_name_for_specified_kb_error.txt"
 )
 with open(kb_component_error_file, "w") as f:
-    for item in kb_component_error_list:
+    for item in kb_msp_file_name_error_list:
         f.write("%s\n" % item)
 
 logger.info("The script ends.")
