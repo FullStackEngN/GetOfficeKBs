@@ -169,4 +169,6 @@ with open(kb_component_error_file, "w") as f:
     for item in kb_msp_file_name_error_list:
         f.write("%s\n" % item)
 
+logger.info("Please check output file: " + kb_component_file)
+logger.info("Please check error output file: " + kb_component_error_file)
 logger.info("The script ends.")
