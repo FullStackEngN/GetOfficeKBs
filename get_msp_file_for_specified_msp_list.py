@@ -43,7 +43,7 @@ logger.info("The script folder is " + current_script_folder)
 
 component_list = []
 try:
-    f = open(current_script_folder + "output_component_for_checked_kb.txt", "r")
+    f = open(current_script_folder + "output_msp_file_name_for_specified_kb.txt", "r")
 
     for line in f:
         component_str = line.split(",")[-1].strip()
@@ -86,3 +86,7 @@ component_kb_list_file = current_script_folder + "output_latest_kb_for_component
 with open(component_kb_list_file, "w") as f:
     for item in component_kb_list:
         f.write("%s\n" % item)
+
+
+logger.info("Please check output file: " + component_kb_list_file)
+logger.info("The script ends.")
