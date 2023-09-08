@@ -70,12 +70,12 @@ time_now = formatted_date_time = datetime.now().strftime("%Y%m%d%H%M%S")
 
 source_folder_x32 = r"C:\CodeRepos\GetOfficeKBs\Folder_Office2016_KBs\x86_msp"
 target_folder_x32 = (
-    "C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\\" + time_now + "x86_msp"
+    "C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\\" + time_now + "_x86_msp"
 )
 
 source_folder_x64 = r"C:\CodeRepos\GetOfficeKBs\Folder_Office2016_KBs\x64_msp"
 target_folder_x64 = (
-    "C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\\" + time_now + "x64_msp"
+    "C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\\" + time_now + "_x64_msp"
 )
 
 
