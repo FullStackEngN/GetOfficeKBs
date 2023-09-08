@@ -1,6 +1,7 @@
 import os
 import pathlib
 import shutil
+from datetime import datetime
 from pathlib import Path
 
 from my_logger_object import create_logger_object
@@ -17,7 +18,7 @@ def copy_component(component_kb_list, component_name, source_folder, target_fold
     for root, dirs, files in os.walk(source_folder):
         for file_name in files:
             component_name_in_file = file_name.split("-")[0].strip()
-            if component_name == component_name_in_file:    
+            if component_name == component_name_in_file:
                 soure_file_path = root + os.sep + file_name
                 target_file_path = target_folder + os.sep + file_name
 
@@ -65,11 +66,17 @@ with open(component_list_file, "w") as f:
     for item in component_list:
         f.write("%s\n" % item)
 
+time_now = formatted_date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+
 source_folder_x32 = r"C:\CodeRepos\GetOfficeKBs\Folder_Office2016_KBs\x86_msp"
-target_folder_x32 = r"C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\x86_msp"
+target_folder_x32 = (
+    "C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\\" + time_now + "x86_msp"
+)
 
 source_folder_x64 = r"C:\CodeRepos\GetOfficeKBs\Folder_Office2016_KBs\x64_msp"
-target_folder_x64 = r"C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\x64_msp"
+target_folder_x64 = (
+    "C:\CodeRepos\GetOfficeKBs\Folder_Latest_KB_Numbers\\" + time_now + "x64_msp"
+)
 
 
 component_kb_list = []
@@ -89,4 +96,6 @@ with open(component_kb_list_file, "w") as f:
 
 
 logger.info("Please check output file: " + component_kb_list_file)
+logger.info(f"Please check output folder: {target_folder_x32}")
+logger.info(f"Please check output folder: {target_folder_x64}")
 logger.info("The script ends.")
