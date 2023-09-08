@@ -35,7 +35,7 @@ if not os.path.exists(target_download_folder):
 
 kb_list_expected = []
 try:
-    f = open(current_script_folder + "kb_list_expected.txt", "r")
+    f = open(current_script_folder + "input_kb_list_expected.txt", "r")
 
     for line in f:
         kb_list_expected.append(line.strip().upper())

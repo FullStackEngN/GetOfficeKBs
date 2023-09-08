@@ -48,7 +48,7 @@ if not os.path.exists(target_script_folder + "screenshots"):
 kb_list_specified = []
 
 try:
-    f = open(current_script_folder + "kb_list_specified.txt", "r")
+    f = open(current_script_folder + "input_kb_list_specified.txt", "r")
 
     for line in f:
         kb_number_str = None
