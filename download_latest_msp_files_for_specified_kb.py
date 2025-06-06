@@ -183,24 +183,12 @@ with open(msp_file_list_file, "w", encoding="utf-8") as f:
         # Save as CSV: filename,product,non_security_release_date,non_security_KB,security_release_date,security_KB
         if msp_file.security_greater_than_non_security:
             print(
-                msp_file.filename
-                + ","
-                + msp_file.product
-                + ","
-                + +msp_file.security_release_date
-                + ","
-                + msp_file.security_KB,
+                msp_file.filename + "," + msp_file.security_release_date + ",KB" + msp_file.security_KB,
                 file=f,
             )
         else:
             print(
-                msp_file.filename
-                + ","
-                + msp_file.product
-                + ","
-                + msp_file.non_security_release_date
-                + ","
-                + msp_file.non_security_KB,
+                msp_file.filename + "," + msp_file.non_security_release_date + ",KB" + msp_file.non_security_KB,
                 file=f,
             )
 
