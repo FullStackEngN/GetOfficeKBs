@@ -148,3 +148,5 @@ Folder_*
 log_*
 output_*
 *.pptx
+
+input_kb_list_*.txt
