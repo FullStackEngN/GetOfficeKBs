@@ -147,3 +147,4 @@ cython_debug/
 Folder_*
 log_*
 output_*
+*.pptx
