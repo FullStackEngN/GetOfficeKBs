@@ -5,7 +5,6 @@ import pathlib
 import re
 import urllib.request
 
-import wget
 from lxml import html
 from selenium import webdriver
 from selenium.webdriver.common.by import By

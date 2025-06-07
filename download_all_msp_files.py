@@ -3,12 +3,10 @@
 # determines which KBs to download or ignore, retrieves download links using Selenium,
 # downloads the CAB files into architecture-specific folders, and extracts MSP files from the CABs.
 
-import logging
 import os
 import pathlib
 import urllib.request
 
-import wget
 from lxml import html
 from selenium import webdriver
 
